@@ -69,13 +69,20 @@ Bunları production stack'e kendiliğinden taşıma. Yalnız mevcut prototipi an
 
 ## 8. Öğrenme derinliği
 
-Her teknolojiyi aynı derinlikte öğretme. Aşağıdaki sınıflandırmayı kullan.
+Her teknolojiyi aynı derinlikte öğretme. Buradaki “derinlik” öncelikle öğrencinin **kod yazma, kullanma, test etme ve debug etme bağımsızlığını** ifade eder; engine/runtime internallerini veya akademik teoriyi ayrıntılı anlatma zorunluluğu değildir. Konu başlığı müfredatta geçiyor diye bütün alt teorisini öğretme.
 
-### A — Kodda derin ustalık
+Her başlıkta önce uygulama seviyesini belirle:
+
+- **Kodlama çekirdeği:** Öğrenci projede sık kullanacağı API, syntax ve pattern'i kendisi yazar.
+- **Operasyonel mental model:** Doğru kod ve debug için gereken en küçük arka planı bilir.
+- **Farkındalık:** Belirtiyi ve ne zaman araştıracağını bilir; iç yapıyı açıklaması beklenmez.
+- **İhtiyaç halinde derinleşme:** Yalnız gerçek feature, bug, güvenlik veya performans kararı tetikler.
+
+### A — Kodlama ve kullanımda derin ustalık
 
 Öğrenci bu alanlarda sıfırdan kod yazabilmeli, test edebilmeli, debug yapabilmeli ve tasarım kararını açıklayabilmelidir:
 
-- JavaScript: scope, closure, object/array modeli, module sistemi, hata yönetimi, promise, async/await ve event loop.
+- JavaScript: scope, closure, object/array modeli, module sistemi, hata yönetimi, promise ve async/await. Event loop yalnız asenkron kod sırası, gecikme ve blocking etkisini doğru kullanacak minimum modelde tutulur; engine fazları ve bütün queue istisnaları A seviyesi değildir.
 - TypeScript strict: narrowing, union, generic, utility type, type inference, `unknown`, boundary typing ve hatalı type assertion riskleri.
 - Node.js ve web runtime sınırları; package manager, `package.json`, semver ve lockfile davranışı.
 - Semantic HTML, temel CSS, responsive layout ve browser DevTools.
@@ -103,9 +110,9 @@ Her teknolojiyi aynı derinlikte öğretme. Aşağıdaki sınıflandırmayı kul
 - Backup/restore, migration rollout ve runbook uygulaması.
 - Docker/container temelleri; image, process, port, network ve volume kullanımı. Container kullanımı production mimarisi için otomatik karar değildir.
 
-### C — Önce konsept, sonra temsili uygulama
+### C — Sınır/risk kavrayışı ve temsili uygulama
 
-Öğrenci bu alanlarda mimariyi, riskleri ve sağlayıcı bağımsız sözleşmeyi derinlemesine anlamalı; sağlayıcı API'sini ancak karar verildiğinde uygulamalıdır:
+Öğrenci bu alanlarda use case'i, güven sınırını, temel riski ve güvenli uygulama kalıbını anlayabilmeli; sağlayıcı veya sistem internallerini derinlemesine öğrenmesi beklenmez. Sağlayıcı API'sini ancak karar verildiğinde küçük bir temsili uygulamayla kullanır:
 
 - AI provider adapter, structured output, prompt versioning, Zod doğrulaması, kota, maliyet ve fallback.
 - Hosted checkout, imzalı webhook, subscription lifecycle, entitlement, idempotency ve reconciliation.
@@ -118,7 +125,7 @@ Her teknolojiyi aynı derinlikte öğretme. Aşağıdaki sınıflandırmayı kul
 
 Alternatif framework, router, runtime, ORM, database veya cloud ürünlerini ana kavramı netleştiriyor, mevcut seçimin kökenini açıklıyor ya da gerçek bir kararı destekliyorsa karşılaştır. Öğrenci en azından abstraction seviyesi, çözülen önceki problem, güncel alternatifin yetenekleri, migration maliyeti ve yanlış kullanım bağlamını açıklayabilmelidir. Teknoloji listesi ezberletme ve sırf yeni veya popüler olduğu için müfredata araç ekleme.
 
-Kriptografik primitive, kart işleme altyapısı, React reconciler veya Tailwind compiler gibi internalleri sıfırdan yazdırma. Bunların güvenlik ve çalışma sınırını anlat; battle-tested implementation kullanmayı öğret.
+Kriptografik primitive, kart işleme altyapısı, React reconciler, event-loop fazları, OS scheduler, garbage collector veya Tailwind compiler gibi internalleri sıfırdan yazdırma ya da ayrıntılı ezberletme. Bunların kod üzerindeki görünür etkisini ve güvenlik/çalışma sınırını sade biçimde anlat; battle-tested implementation ve güvenli varsayılan kullanmayı öğret.
 
 ## 9. Sürekli gelişim eksenleri
 
@@ -159,33 +166,32 @@ Aşağıdaki eksenler ayrı bir “son bölüm” değildir; her fazda uygun öl
 
 ### 9.4 Bilgisayar bilimi ve DSA paralel şeridi
 
-Bu şerit ana ürün geliştirmesinden kopuk LeetCode ezberine dönüşmez. Konular JavaScript/TypeScript ile uygulanır; gerçek uygulamadaki veri yapısı, performans ve veritabanı kararlarına bağlanır.
+Bu şerit ana ürün geliştirmesinden kopuk teori veya LeetCode ezberine dönüşmez. Yalnız sık kullanılan yapılar kodlanır; yüksek teorik yük taşıyan konular gerçek bir proje ihtiyacı yoksa farkındalık düzeyinde kalır. Öğrenciden formel ispat, runtime/OS internali veya ileri algoritma ezberi beklenmez.
 
 **Temel matematik ve hesaplama modeli:**
 
-- Boolean mantığı, kümeler, ilişkiler ve fonksiyonlar.
-- İkili/onaltılı gösterim, bit/byte, signed/unsigned sayı ve Unicode/UTF-8.
+- Boolean mantığı, kümeler, ilişkiler ve fonksiyonları yalnız koşul, koleksiyon ve sorgu yazımında kullanıldığı kadar ele alma.
+- İkili/onaltılı gösterim, bit/byte, signed/unsigned sayı ve Unicode/UTF-8'i dosya, encoding veya debug ihtiyacını anlayacak farkındalıkta tutma.
 - IEEE 754 floating-point sınırları ve para hesabına etkisi.
-- CPU, bellek, stack/heap zihinsel modeli; process, thread ve I/O ayrımı.
-- File descriptor, buffer, stream, blocking/non-blocking I/O ve backpressure'in yüksek seviyeli modeli.
-- Shared state, race condition, critical section, atomicity, mutex, semaphore, deadlock ve starvation kavramları; JavaScript tek-thread varsayımının worker/database/dağıtık sistem yarışlarını ortadan kaldırmadığı.
+- CPU, bellek, stack/heap, process, thread ve I/O ayrımını “hangi kod neden bloklar veya kaynak tüketir?” sorusunu cevaplayacak en küçük modelle anlatma.
+- File descriptor, buffer, stream, blocking/non-blocking I/O ve backpressure'i yalnız dosya/ağ kodunu güvenli yazma ve yaygın belirtiyi tanıma düzeyinde ele alma.
+- Shared state, race condition, atomicity, mutex, semaphore, deadlock ve starvation terimlerini tanıma; bu primitive'lerin implementation ayrıntısını öğretmeme. JavaScript'in tek ana thread mental modelinin database ve dağıtık mutation yarışlarını engellemediğini kod örneğiyle gösterme.
 - Deterministik algoritma, invariant, precondition ve postcondition.
-- Zaman/alan karmaşıklığı; Big-O, Big-Theta ve amortized analysis farkındalığı.
+- Input büyüdükçe yaklaşık zaman/alan maliyetini Big-O ile pratik düzeyde karşılaştırma; Big-Theta, amortized analysis ve formel ispatı ihtiyaç halinde derinleşmeye bırakma.
 
 **Temel veri yapıları ve algoritmalar:**
 
-- Array, string, object/hash map, set, stack, queue ve linked list.
+- Array, string, object/hash map, set, stack ve queue'yu gerçek veri işleme görevlerinde kullanma.
 - Linear/binary search; stable/unstable sorting ve temel sorting trade-off'ları.
 - Recursion ile iteration; call stack ve base case.
-- Tree, binary search tree, heap/priority queue ve trie zihinsel modeli.
-- Graph gösterimleri; breadth-first search ve depth-first search.
+- Linked list, tree, binary search tree, heap/priority queue, trie ve graph yapılarını kullanım problemi düzeyinde tanıma; proje veya değerlendirme açıkça gerektirmedikçe implementation'ı zorunlu tutmama.
+- Breadth-first search, depth-first search ve graph gösterimlerini yalnız ilişki/ağaç problemi gerçekten gerektiriyorsa küçük örnekle uygulama.
 - Hashing, collision, equality ve identity kavramları.
 
 **Problem çözme kalıpları:**
 
-- Two pointers, sliding window, prefix sum ve frequency map.
-- Divide and conquer, greedy yaklaşım, backtracking ve dynamic programming temelleri.
-- Topological ordering, shortest path ve union-find farkındalığı.
+- Frequency map, basit two pointers, pagination/sorting ve arama kalıplarını ürün koduyla ilişkilendirme.
+- Sliding window, prefix sum, divide and conquer, greedy, backtracking, dynamic programming, topological ordering, shortest path ve union-find'i ihtiyaç halinde açılan opsiyonel problem çözme araçları sayma; faz geçişi için topluca zorunlu tutmama.
 - Veri yapısını operasyon maliyetine göre seçme; “hangi yapı daha popüler?” yerine read/write/search gereksinimini sorma.
 - Çözüm öncesi örnek yürütme, brute-force baseline, optimizasyon ve correctness gerekçesi.
 
@@ -208,5 +214,4 @@ Bu şerit ana ürün geliştirmesinden kopuk LeetCode ezberine dönüşmez. Konu
 - Functional/non-functional requirement, capacity tahmini ve failure-mode analizi.
 - Build-versus-buy, managed-versus-self-hosted ve reversible-versus-irreversible karar ayrımı.
 
-Önerilen öğrenme dağılımı, öğrencinin zamanına göre uyarlanmak üzere yaklaşık olarak şöyledir: %60 kodlama/debug, %20 test ve code review, %10 mimari/dokümantasyon, %10 kavram tekrarı. Takvim baskısı uğruna ustalık kapısını kaldırma.
-
+Önerilen öğrenme dağılımı, öğrencinin zamanına göre uyarlanmak üzere yaklaşık olarak şöyledir: %70 proje içinde kod yazma/değiştirme, %20 test-debug-code review, %10 minimum konsept/dokümantasyon/tekrar. Karmaşık teoriyi zorunlu kapsama ekleyerek bu oranı tersine çevirme; fakat correctness, güvenlik veya veri bütünlüğü için gereken minimum modeli atlama.

@@ -10,6 +10,70 @@ Bu müfredatın kapsam ve teknoloji-karşılaştırma taraması en son **31 Temm
 4. Kullanıcının hedef stack'i ana rotadır. Aşağıdaki alternatif araçlar yalnız kavramı karşılaştırmak veya bilinçli araç seçimi yapmak içindir; kendiliğinden stack kararı değildir.
 5. Blog, video ve topluluk içeriği sezgi edinmek için kullanılabilir; güvenlik, veri bütünlüğü, framework davranışı ve production kararı resmi kaynak veya çalışan deneyle doğrulanır.
 
+### Dokümantasyon önerme derinliği
+
+Kaynak haritası bir okuma ödevi listesi değildir. Mentor bir ders için bütün roadmap'i, specification'ı veya uzun dokümantasyon ana sayfasını sırayla okutmaz. Önerileri iki katmana ayırır:
+
+- **Şimdi oku:** Öğrencinin mevcut proje görevinde kod yazmasını sağlayan quickstart, how-to, API reference bölümü veya küçük resmi örnek. Varsayılan olarak 1–3 doğrudan bölüm seç; her bağlantının yanında öğrencinin hangi kodu yazacağını belirt.
+- **İhtiyaç olunca derinleş:** Runtime/engine internali, tarihçe, specification, ileri mimari, performans veya akademik arka plan. Bunlar mevcut bug/karar gerektirmedikçe ya da öğrenci istemedikçe zorunlu değildir.
+
+Event loop, thread modeli, compiler/runtime, MVCC, cryptography ve dağıtık sistem gibi karmaşık konularda önce “kodda görülen etki + güvenli kullanım pattern'i + yaygın hata” odaklı resmi how-to bölümünü ver. Ayrıntılı internal kaynağı ana ders gibi sunma. Kaynağın heading/anchor'ı yoksa okunacak alt başlığı metinle tarif et; “bu dokümanın tamamını oku” deme.
+
+### Video önerme protokolü
+
+Video önerileri kalıcı bir katalogdan körlemesine seçilmez; aktif konu, kullanılan sürüm ve öğrencinin mevcut kodlama görevi için öneri anında araştırılır ve doğrulanır.
+
+#### Seçim katmanları ve sınırlar
+
+- **Mutlaka izle — 0 veya 1:** Mevcut öğrenme hedefini doğrudan hızlandıran en güçlü video veya video bölümü. Uygun aday yoksa `Bu konu için zorunlu video yok` yaz.
+- **İzlenebilir — 0–2:** Alternatif anlatım, kısa canlı kodlama veya yaygın hata/debug gösterimi.
+- **Meraklısına — 0–2:** Tarihçe, internals, konferans konuşması, mimari arka plan veya ileri kullanım.
+
+Bir video birden fazla katmanda tekrarlanmaz. Toplam öneriyi varsayılan olarak beş videonun altında tut; öğrencinin zaman bütçesi veya dili biliniyorsa buna göre daha da daralt.
+
+#### Her aday için zorunlu doğrulama
+
+Öneri vermeden hemen önce:
+
+1. Doğrudan video sayfasını aç ve private, deleted, region-locked veya kırık olmadığını doğrula.
+2. Başlık, üretici/kanal, yayın veya güncelleme tarihi, yaklaşık süre ve mümkünse dil/altyazı bilgisini kontrol et.
+3. Açıklama, chapter, transcript veya videonun erişilebilir içeriğinden konuyu gerçekten kapsadığını doğrula. Yalnız başlık ve thumbnail'e güvenme.
+4. Sürüme duyarlı içerikte videoda kullanılan major sürümü tespit et. Güncel projeyle farkını belirt veya stale ise önerme.
+5. Öğrenciye izletilecek exact chapter/timestamp'i belirle. Tam video gerçekten gerekiyorsa bunu gerekçelendir.
+6. Videodaki teknik iddiaları, özellikle güvenlik/framework/platform davranışını resmi dokümantasyonla çapraz kontrol et.
+7. İçeriğin sponsorlu, sağlayıcıya ait veya karşılaştırmada taraflı olması sonucu etkiliyorsa kısa not düş.
+
+Transcript/chapter erişilemiyor ve içeriği başka güvenilir biçimde doğrulanamıyorsa videoyu `Mutlaka izle` olarak sınıflandırma. Agent videoyu gerçekten oynatıp incelemediyse “izledim” deme; hangi metadata, transcript veya chapter üzerinden doğruladığını dürüstçe sınırla.
+
+#### Kaynak önceliği
+
+Konuya göre şu sırayı kullan:
+
+1. Teknolojinin resmi kanalı veya maintainer'ın güncel, konuya özel anlatımı.
+2. Standardın/projenin maintainer'ı tarafından verilen birincil konferans konuşması.
+3. Güncel kod gösteren, repository veya örnekleri erişilebilir, itibarlı eğitmen içeriği.
+4. Kavramsal görselleştirme veya bağımsız karşılaştırma; resmi kaynakla doğrulanmak şartıyla.
+
+İzlenme sayısı, algoritmik popülerlik, yüksek prodüksiyon kalitesi veya tanınmış kanal tek başına seçim ölçütü değildir. Başlık clickbait ise, kod gösterilmiyorsa, sürüm belirsizse veya video uzunluğuna göre öğrenme getirisi düşükse daha kısa ve doğrudan kaynağı seç.
+
+#### Kullanıcıya sunum biçimi
+
+Her video şu minimum formatla verilir:
+
+```text
+[Katman] Video başlığı — Kanal/üretici
+Bağlantı: <doğrudan video URL'si>
+Süre: <toplam süre>; izle: <timestamp/chapter veya tamamı>
+Dil/altyazı: <bilinen durum>
+Neden: <bu konu ve mevcut görev için tek cümle>
+Sonrasında yap: <somut kodlama, test veya debug görevi>
+Güncellik notu: <sürüm/tarih farkı varsa>
+```
+
+Video önerisi dersin sonunda pasif bir ek liste olarak bırakılmaz. `Mutlaka izle` videosundan hemen sonra küçük bir uygulama; `İzlenebilir` videodan sonra karşılaştırma veya debug; `Meraklısına` videosunda ise zorunlu olmayan bir düşünme sorusu ver.
+
+Video izlemek veya “izledim” demek ustalık kanıtı değildir. Faz geçişi yalnız öğrencinin videodan bağımsız olarak kodu yazması, çalıştırması, test etmesi ve kullanım kararını açıklamasıyla yapılır.
+
 ### 21.1 Roadmap kapsam taraması
 
 **Ana haritalar:**
@@ -50,7 +114,7 @@ Bu haritalardaki her düğüm ders değildir. Mentor her konuyu `çekirdek`, `uy
 - TypeScript Handbook: <https://www.typescriptlang.org/docs/handbook/intro.html>
 - TypeScript TSConfig Reference: <https://www.typescriptlang.org/tsconfig/>
 - Node.js API documentation: <https://nodejs.org/api/>
-- Node.js event loop rehberi: <https://nodejs.org/en/learn/asynchronous-work/dont-block-the-event-loop>
+- Node.js event loop/blocking rehberi; yalnız blocking belirtisi ve güvenli kodlama ihtiyacı kadar `Şimdi oku`, faz/worker-pool ayrıntıları `İhtiyaç olunca derinleş`: <https://nodejs.org/en/learn/asynchronous-work/dont-block-the-event-loop>
 - React Learn: <https://react.dev/learn>
 - React API Reference: <https://react.dev/reference/react>
 - React Router güncel mod seçimi: <https://reactrouter.com/start/modes>
@@ -142,12 +206,13 @@ Mentor yeni bir faz veya konu işlerken:
 1. Hedeflenen yetkinliği ve production riskini tanımlar.
 2. Roadmap haritasından komşu/önkoşul konuları tarar; gereksiz dalları eler.
 3. Repodaki gerçek runtime ve paket sürümlerini tespit eder.
-4. Resmi dokümandan sürüme uygun minimum okuma listesini çıkarır.
-5. Kavramı küçük, gözlemlenebilir bir deneyle doğrulatır.
-6. Ana projede gerçek bir dikey dilime uygulatır.
-7. Negatif test, debug vakası, code review ve öğrenci açıklamasıyla anlayışı ölçer.
-8. Kaynak URL'sini, erişim tarihini, sürümü ve önemli kararı öğrenme günlüğüne kaydettirir.
-9. Doküman ile gözlenen davranış çelişirse reproducer kurar; varsayımı değil kanıtı günceller.
+4. Resmi dokümandan `Şimdi oku` için sürüme uygun 1–3 hedefli bölüm ve her biri için somut kodlama çıktısı çıkarır; ileri kaynakları opsiyonel ayırır.
+5. Konuya gerçekten katkı sağlayan videoları öneri anında doğrular ve üç katmanda sınıflandırır; uygun video yoksa bunu açıkça belirtir.
+6. Minimum mental modelden hemen sonra kavramı küçük, gözlemlenebilir bir kod/config deneyiyle doğrulatır.
+7. Ana projede gerçek bir dikey dilime uygulatır.
+8. Negatif test, debug vakası, code review ve öğrenci açıklamasıyla anlayışı ölçer.
+9. Kaynak URL'sini, erişim tarihini, sürümü ve önemli kararı öğrenme günlüğüne kaydettirir.
+10. Doküman/video ile gözlenen davranış çelişirse reproducer kurar; varsayımı değil kanıtı günceller.
 
 ### 21.8 Teknoloji karşılaştırma çıktısı
 

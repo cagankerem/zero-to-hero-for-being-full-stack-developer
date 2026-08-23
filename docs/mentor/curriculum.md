@@ -4,6 +4,8 @@
 
 Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döngüsü eklenir. Öğrenci kanıt sunduğunda bildiği bölüm hızlandırılabilir, fakat yalnız “daha önce kullandım” beyanıyla atlanmaz.
 
+Bu dosyadaki maddeler bir kapsam envanteridir; her madde eşit teorik derinlikte ders veya faz kapısı değildir. Öğretim `stack-and-learning-depth.md` içindeki uygulama-merkezli sınıflandırmaya uyar. Her konuda önce projede ne işe yaradığı, nasıl kodlandığı/yapılandırıldığı, nasıl test-debug edildiği ve ne zaman kullanılacağı öğretilir. Runtime/OS internalleri, formel teori, ileri dağıtık sistemler, compiler ayrıntıları ve benzeri yüksek bilişsel yük taşıyan kısımlar gerçek bir feature/bug/güvenlik ihtiyacı yoksa sade farkındalık olarak kalır; öğrenci bunların bütün iç işleyişinden sorumlu tutulmaz.
+
 ### Faz 0 — Seviye tespiti ve çalışma sistemi
 
 **Amaç:** Öğrencinin araç ezberinden bağımsız çalışabileceği geliştirme ortamını, temel internet mental modelini ve başlangıç beceri haritasını kurmak.
@@ -59,7 +61,7 @@ Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döng�
 
 **Seviye tespit kapsamı:**
 
-- Küçük JavaScript okuma/yazma ve asenkron çıktı tahmini.
+- Küçük JavaScript okuma/yazma ve basit promise/`async`/`await` akışını takip etme.
 - Basit TypeScript hata düzeltme ve type narrowing.
 - Semantic HTML/CSS ve küçük React state görevi.
 - Basit SQL sorgusu ve veri ilişkisi açıklaması.
@@ -149,10 +151,10 @@ Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döng�
 
 **Asenkron JavaScript:**
 
-- Synchronous call stack ile runtime queue'larının ilişkisi.
+- Senkron kodun önce çalıştığı, `await` sonrasının daha sonra devam ettiği ve uzun senkron işin diğer işi geciktirdiği minimum mental model.
 - Callback, promise state/chaining, rejection ve `finally`.
 - `async/await`'in promise modeli; sequential ve concurrent bekleme farkı.
-- Event loop, task/microtask sırası ve çıktı tahmini.
+- Event loop'u bir “bekleyen asenkron işlerin uygun olduğunda devam etmesi” modeliyle, birkaç küçük kod örneği üzerinden ele alma; task/microtask fazlarını ve bütün ordering istisnalarını ezberletmeme.
 - Timer'ların garanti edilen kesin zaman olmadığı.
 - `Promise.all`, `allSettled`, `race`, `any` ve hata davranışları.
 - Timeout, cancellation/`AbortController`, retry ve exponential backoff temeli.
@@ -171,7 +173,7 @@ Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döng�
 
 **Çıkış kapısı:**
 
-- Öğrenci asenkron çıktı sırasını çalıştırmadan önce doğru gerekçelendirebilir.
+- Öğrenci callback/promise/`async`/`await` ile gerçek bir veri akışını yazabilir; sequential/concurrent kullanım, stale response ve rejection hatalarını testle ayırabilir.
 - Closure, mutation, equality ve reference kaynaklı bug'ları teşhis edebilir.
 - Küçük modülü boş dosyadan, testleriyle ve `any` benzeri kaçış olmadan yazabilir.
 
@@ -231,13 +233,13 @@ Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döng�
 
 **Node.js runtime:**
 
-- Node process'i, V8, event loop ve worker pool'un yüksek seviyeli ilişkisi.
+- Node process'i, V8, event loop ve worker pool ilişkisini yalnız “I/O beklerken süreç başka işe devam edebilir; uzun CPU işi isteği geciktirebilir” sonucunu destekleyen sade modelle anlatma.
 - ESM ve CommonJS; `package.json` `type`, import resolution ve interoperability.
 - `process.argv`, exit code, signal, environment ve graceful shutdown.
 - `path`, URL ve filesystem API'leri; sync/async operasyon farkı.
 - Buffer, encoding ve stream zihinsel modeli; readable/writable/transform ve backpressure.
 - EventEmitter; listener lifecycle ve `error` event'i.
-- Timer, promise ve I/O callback sırası.
+- Timer, promise ve I/O callback'lerinin asenkron devam ettiğini küçük kodla gözleme; kesin sıra ayrıntısını yalnız gerçek bug gerektiriyorsa araştırma.
 - CPU-bound işin event loop'u bloklaması; worker/queue/başka runtime kararına hazırlık.
 - Node hata modelleri: throw, rejected promise, callback error ve emitter error.
 - Native `fetch`, HTTP client/server ve AbortSignal temelleri.
@@ -269,7 +271,7 @@ Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döng�
 
 - Öğrenci type error ile runtime validation error'ı ayırabilir.
 - `any`, non-null assertion veya aşırı generic kullanmadan sınırı güvenli modeller.
-- Event loop'u bloklayan veya resource sızdıran Node kodunu profiler/araçlarla bulabilir.
+- Yavaşlayan bir Node akışında uzun senkron/CPU işini veya kapanmayan resource'u timing, log ve uygun araçla fark edip güvenli kodlama seçeneğini uygulayabilir; V8/libuv internallerini açıklaması gerekmez.
 
 ### Faz 3 — Web platformu, React ve component düşüncesi
 
@@ -625,13 +627,13 @@ Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döng�
 
 **Transaction, MVCC ve concurrency:**
 
-- ACID'in pratik anlamı.
-- `begin`, `commit`, `rollback`, savepoint.
-- PostgreSQL MVCC ve snapshot mental modeli.
-- Read Committed, Repeatable Read ve Serializable; anomaly örnekleri.
-- Lost update, write skew, dirty/non-repeatable/phantom read kavramları.
-- Row/table lock, `select ... for update`, lock scope ve lock sırası.
-- Deadlock oluşumu, tespiti ve retry stratejisi.
+- ACID'i kullanıcıya yarım kalmış veya çelişkili veri göstermeme gibi pratik sonuçlarla açıklama.
+- `begin`, `commit`, `rollback` ve gerektiğinde savepoint'i gerçek mutation kodunda kullanma.
+- PostgreSQL MVCC/snapshot modelini “aynı anda çalışan işlemler farklı veri görünümü görebilir” sonucunu anlayacak kadar sade tutma; tuple/version internallerine girmeme.
+- Read Committed, Repeatable Read ve Serializable seviyelerini yalnız proje senaryosu ve gözlenen davranış üzerinden seçme.
+- Lost update'i kod/test ile gösterme; write skew, dirty/non-repeatable/phantom read terimlerini tanıma ve gerektiğinde resmi kaynağa yönelme.
+- `select ... for update`, lock scope ve tutarlı lock sırasını ihtiyaç olan mutation'da uygulama.
+- Deadlock belirtisini tanıma, transaction'ı kısa tutma, tutarlı sıra ve güvenli retry uygulama; lock-manager internallerini öğretmeme.
 - Optimistic concurrency ile pessimistic lock trade-off'u.
 - Atomic counter, quota reservation ve first-terminal-decision gibi yarışlar.
 - Transaction içinde external network çağrısı yapmanın riski.
@@ -1482,6 +1484,8 @@ Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döng�
 
 **Pattern ve mimari stiller:**
 
+Bu bölümde yalnız capstone'da gerçek bir problemi çözen pattern kodlanır. Diğer pattern ve mimari adları; çözdükleri problem, basit kullanım şekli ve aşırı kullanım riski düzeyinde tanıtılır, topluca implementation/ezber görevi yapılmaz.
+
 - Pattern'i isim ezberi değil tekrar eden problem/force/sonuç olarak öğrenme.
 - Strategy/adapter, factory, decorator, observer ve state pattern'ini gerçek ihtiyaçta kullanma.
 - Repository/unit-of-work gibi enterprise pattern'leri database/framework gerçekliğine göre seçme.
@@ -1494,11 +1498,13 @@ Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döng�
 
 **Distributed systems ve system design:**
 
+Bu başlıklar varsayılan olarak farkındalık düzeyindedir. Her kavram için yalnız kod/operasyon belirtisi, güvenli başlangıç tercihi, basit konfigürasyon veya pattern ve ne zaman uzmanlık/derin araştırma gerektiği anlatılır. Capstone gerçekten kullanmıyorsa consensus algoritması, protokol internali, formel CAP tartışması veya çok-bölgeli sistem tasarımı faz kapısı değildir.
+
 - Latency, throughput, concurrency, scalability ve availability ayrımı.
 - Vertical/horizontal scaling ve stateful/stateless component.
 - Consistency, stale read, read-your-write ve eventual consistency.
-- CAP'i network partition bağlamında doğru yorumlama; sloganlaştırmama.
-- Replication, failover, quorum ve split-brain farkındalığı.
+- CAP'i yalnız network partition olduğunda consistency/availability kararı bulunduğunu fark edecek sade düzeyde ele alma; ispat veya ayrıntılı model istememe.
+- Replication, failover, quorum ve split-brain terimlerini belirti/risk ve managed-service kararı düzeyinde tanıma.
 - Load balancer/reverse proxy, health check ve service discovery.
 - Cache-aside/write-through/write-behind ve invalidation trade-off'u.
 - Queue/stream; at-most-once, at-least-once ve “effectively once” işleme.
@@ -1518,7 +1524,7 @@ Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döng�
 5. Trust boundary, PII/secret ve authorization kararlarını göster.
 6. Basit high-level component/data-flow çiz.
 7. Consistency, concurrency ve transaction sınırını seç.
-8. Hot path, bottleneck ve failure mode'ları sırayla derinleştir.
+8. Yalnız ölçülen hot path, bottleneck ve gerçekleşebilir failure mode'u gerektiği kadar incele.
 9. Observe, test, deploy, migrate ve recover planını ekle.
 10. Alternatif/trade-off, accepted risk ve yeniden değerlendirme tetikleyicisini ADR'ye yaz.
 
@@ -1580,4 +1586,3 @@ Fazlar doğrusal bir omurgadır; eksik önkoşul varsa kısa iyileştirme döng�
 - Mimari kararları, kabul edilen riskleri ve yeniden değerlendirme koşullarını ADR ile açıklar.
 - Sistem failure/incident senaryosunda güvenli mitigation ve recovery uygular.
 - Bilmediğini doğru sınırlar ve yeni öğrenme rotasını kendi başına kurar.
-
