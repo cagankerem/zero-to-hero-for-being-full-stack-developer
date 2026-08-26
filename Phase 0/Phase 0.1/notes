@@ -1,0 +1,44 @@
+#CPU, bellek, disk, process, thread ve port ilişkisi
+
+    ##Bir uygulamanın çalışma akışını şöyle düşünebilirsin:
+
+        Diskteki program
+            ↓ çalıştırılır
+
+        Process oluşur
+            ↓
+
+        Kod ve çalışma verileri belleğe alınır
+            ↓
+
+        Process içindeki thread’ler CPU’da çalıştırılır
+            ↓
+
+        Uygulama gerekirse bir socket açıp porta bağlanır
+
+        - CPU: Programın talimatlarını yürütür. Birden fazla çekirdek, uygun işlerin gerçekten paralel çalışabilmesini sağlar.
+        - Bellek (RAM): Çalışan programın kodunu ve geçici verilerini tutar. Diskten hızlıdır fakat kalıcı değildir. Her process normalde kendine ait izole bir sanal adres alanına sahiptir.
+        - Disk: Kaynak kodu, executable dosyaları, veritabanı ve diğer kalıcı verileri saklar. Program diskten yüklenir; çalışırken aktif veriler çoğunlukla bellekte tutulur.
+        - Process: Çalışan program örneğidir. PID, bellek alanı, açık dosyalar, socket’ler ve environment gibi kaynaklara sahiptir. Aynı programı iki kez çalıştırmak genellikle iki ayrı process oluşturur.
+        - Thread: Process içindeki yürütme akışıdır. Aynı process’in thread’leri belleği ve çoğu kaynağı paylaşır. Bu paylaşım iletişimi kolaylaştırırken race condition gibi eşzamanlılık sorunları doğurabilir.
+        - Port: İşletim sisteminin gelen TCP/UDP trafiğini doğru socket’e yönlendirmesinde kullandığı mantıksal numaradır. Port doğrudan process değildir; process’in açtığı bir socket belirli bir IP–protokol–port kombinasyonuna bağlanır.
+
+    ##Node.js için Node.js açısından kısa örnek:
+
+        server.listen(3000);
+        Bu satırın arkasındaki yüksek seviyeli tablo şudur:
+        1. node programı diskten çalıştırılır ve bir process oluşur.
+        2. Kod ve gerekli veriler RAM’e alınır.
+        3. JavaScript ağırlıklı olarak ana thread üzerinde CPU’da yürütülür.
+        4. Process bir TCP socket’i açıp 3000 numaralı porta bağlar.
+        5. İşletim sistemi bu porta gelen bağlantıları ilgili socket’e iletir.
+
+    ##Yaygın belirtiler de doğrudan bu modele bağlanır:
+
+        - Sürekli yüksek CPU → yoğun hesaplama veya bitmeyen döngü
+        - Sürekli büyüyen RAM → tutulan gereksiz referanslar ya da sınırsız veri
+        - Yavaş dosya/veritabanı işlemi → disk veya I/O darboğazı
+        - address already in use → aynı adres/port kombinasyonunun başka bir socket tarafından kullanılması
+- Paylaşılan veride tutarsızlık → thread veya process’ler arası concurrency problemi
+
+**! TÜM BU İŞLEMLERİ GÖRÜNTÜLEMEK ADINA "zero to hero/Phase 0/Phase 0.1/process observer example" KLASÖRÜNDEKİ ÖRNEĞE GÖZ AT. !**

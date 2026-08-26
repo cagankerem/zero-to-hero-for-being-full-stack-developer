@@ -1,0 +1,230 @@
+"Phase 0/Phase 0.1/process observing example/os-lab.mjs" dosyasının içeriğindeki kodların işlevi: 
+    - Node ve dosyan: disk
+    - Çalışan node örneği: process
+    - Buffer nesneleri ve runtime verileri: bellek
+    - /cpu hesaplaması: CPU
+    - Node runtime’ın kullandığı yürütme akışları: thread
+    - HTTP sunucusu: socket ve port
+    - os-lab-output.log: açık ve yazılan dosya
+
+Örnek Process'i başlatmak: 
+    Birinci terminalde:
+        "node os-lab.mjs" komutunu çalıştır;
+    Şuna benzer bir çıktı alacaksın:
+        PID: 12345
+        Port: 127.0.0.1:3000
+        Başlangıç RSS: 42.3 MiB
+    Gerçek PID’yi sonraki cli komutlarında kullan (shell variable ataması):
+        LAB_PID=12345
+    "node os-lab.mjs" komutunun sonucunda çıkan PID: 12345 olduğu varsayıldığında:
+        PID: 12345
+    şunu çalıştırırsın:
+        LAB_PID=12345
+    Sonrasında:
+        ps -p "$LAB_PID"
+    shell tarafından şu komuta dönüştürülür:
+        ps -p 12345
+    Maksat PID’yi her komutta tekrar yazmamak ve yanlış process’i inceleme riskini azaltmaktır:
+        ps -p "$LAB_PID"
+        lsof -p "$LAB_PID"
+        top -l 1 -pid "$LAB_PID"
+    Atamayı doğrulamak için:
+        printf '%s\n' "$LAB_PID"
+
+Process, bellek ve thread’leri incele:
+    Aynı terminalde:
+        ps -o pid,ppid,state,%cpu,%mem,rss,vsz,etime,command -p "$LAB_PID"
+    Örnek Çıktı:
+        PID  PPID STAT  %CPU %MEM   RSS      VSZ         ELAPSED   COMMAND
+          4610 2421 S+    0.0  0.1    11264    446292928   14:21     node os-lab.mjs
+    Önemli sütunlar:
+        - PID: process kimliği
+        - PPID: process’i başlatan parent process
+        - STATE: process durumu
+        - %CPU: kullanılan CPU miktarı
+        - RSS: gerçekten RAM’de bulunan yaklaşık bellek, KiB
+        - VSZ: ayrılmış sanal adres alanı; gerçek RAM kullanımı değildir
+        - ETIME: process’in ne kadar süredir çalıştığı
+
+    Thread sayısını görmek için:
+        "top -l 1 -pid "$LAB_PID" \
+        -stats pid,command,cpu,mem,threads,state,time"
+    Örnek Çıktı: 
+        Processes: 779 total, 2 running, 777 sleeping, 4448 threads 
+        2026/08/26 19:18:12
+        Load Avg: 1.39, 1.67, 1.83 
+        CPU usage: 3.89% user, 10.38% sys, 85.71% idle 
+        SharedLibs: 661M resident, 121M data, 124M linkedit.
+        MemRegions: 679981 total, 3999M resident, 249M private, 1900M shared.
+        PhysMem: 15G used (2413M wired, 4811M compressor), 408M unused.
+        VM: 368T vsize, 6144M framework vsize, 745419(0) swapins, 1185194(0) swapouts.
+        Networks: packets: 152793222/162G in, 78261482/18G out.
+        Disks: 72855659/1302G read, 49060752/998G written.
+
+        PID   COMMAND %CPU MEM #TH STATE    TIME    
+        4610  node    0.0  17M 8   sleeping 00:00.08
+    Birden fazla thread görmen, JavaScript kodunun otomatik olarak bütün thread’lerde çalıştığı anlamına gelmez. 
+    Node runtime’ı yardımcı işler için ek thread’ler kullanabilir; JavaScript callback’lerimiz burada ağırlıklı olarak ana JavaScript thread’inde çalışır.
+            
+            **Meraklısına: 
+        Programlama dili ile thread aynı kavram değildir.
+        Node.js, JavaScript kodunu çalıştırmak ve işletim sistemiyle iletişim kurmak için C/C++ ile geliştirilmiş runtime bileşenleri kullanır. Bu runtime, bazı işleri yardımcı thread’lere aktarır; fakat native kod kullanılması tek başına yeni thread oluşturulduğu anlamına gelmez.
+
+        Node.js’in kendisi büyük ölçüde C/C++ ile geliştirilmiş bileşenlerden oluşur:
+        - V8 JavaScript motoru: çoğunlukla C++
+        - libuv: çoğunlukla C
+        - OpenSSL gibi bazı bağımlılıklar: C/C++
+        - Node’un native binding’leri: C/C++
+            Fakat CPU çalışırken “JavaScript” veya “C++” çalıştırmaz; bunlardan üretilmiş makine komutlarını yürütür.
+            Ek thread’lerin asıl nedeni, Node runtime’ının bazı işleri paralel veya arka planda yürütmeye ihtiyaç duymasıdır:
+        - V8’in garbage collection ve JIT compilation gibi yardımcı işleri
+        - libuv worker pool üzerinden dosya sistemi işlemleri
+        - Bazı DNS işlemleri
+        - Bazı kriptografi ve sıkıştırma işlemleri
+        - Runtime’ın kendi bakım ve gözlem işleri
+            
+Dinlenen portu görüntüle:
+        "lsof -nP -a -p "$LAB_PID" -iTCP:3000 -sTCP:LISTEN"
+    Örnek Çıktı:
+        COMMAND  PID  USER   FD   TYPE       DEVICE SIZE/OFF     NODE NAME
+        node     4610 cagan  18u  IPv4       0x3591937d4645d119  0t0  TCP 127.0.0.1:3000 (LISTEN)
+
+    Açık tuttuğumuz log dosyasını bul:
+        "lsof -p "$LAB_PID" | grep -F "os-lab-output.log""
+    Örnek Çıktı:
+        node 4610 cagan 17w REG 1,18 74 45684294 /Users/cagan/Documents/zero-to-hero/Phase 0/Phase 0.1/process observing example/os-lab-output.log
+
+Normal HTTP isteğini gözlemle:
+    "curl -i http://127.0.0.1:3000/"
+    Örnek Çıktı:
+        HTTP/1.1 200 OK
+        Date: Wed, 26 Aug 2026 16:48:52 GMT
+        Connection: keep-alive
+        Keep-Alive: timeout=5
+        Content-Length: 32
+    Ardından:
+        "tail os-lab-output.log" -> çalıştıramadım?
+    Akış şöyledir:
+    curl
+     → TCP bağlantısı
+     → 127.0.0.1:3000
+     → işletim sistemindeki socket
+     → Node process’i
+     → request callback’i
+     → log dosyasına yazma
+     → HTTP response
+
+Bellek artışını gözlemle
+    Önce mevcut PID'nin değerlerini kaydet:
+        "ps -o pid,rss,vsz,%mem,command -p "$LAB_PID""
+    Örnek Çıktı: 
+        PID    RSS      VSZ        %MEM COMMAND
+        4610  14928     446297040  0.1  node os-lab.mjs
+    
+    Ardından dört kez bellek ayır:
+        "curl http://127.0.0.1:3000/memory
+        curl http://127.0.0.1:3000/memory
+        curl http://127.0.0.1:3000/memory
+        curl http://127.0.0.1:3000/memory"
+    Örnek Çıktı:
+        RSS: 34.2 MiB
+        RSS: 51.1 MiB
+        RSS: 68.4 MiB
+        RSS: 84.7 MiB
+
+    Tekrar bellek ölçümü yap:
+        "ps -o pid,rss,vsz,%mem,command -p "$LAB_PID""
+    Örnek Çıktı: 
+          PID    RSS      VSZ         %MEM COMMAND
+          4610   86784     446363600  0.5  node os-lab.mjs -> %MEM değerimiz başlangıçta 0.1'di dört kez bellek ayırma işleminden sonra 0.5'e yükseldi.
+        
+CPU kullanımını gözlemle:
+    Terminalde ölçümü başlat:
+        "top -l 6 -s 1 -pid "$LAB_PID" \
+          -stats pid,command,cpu,mem,threads,state,time"
+    Örnek Çıktı (çok uzun, tamamını ekliyorum ancak bu çıktının içeriğinde sadece belli başlı kısımlar önemli): 
+            -stats pid,command,cpu,mem,threads,state,time
+        Processes: 792 total, 3 running, 789 sleeping, 4563 threads 
+        2026/08/26 20:01:35
+        Load Avg: 2.49, 2.74, 2.40 
+        CPU usage: 10.71% user, 12.38% sys, 76.90% idle 
+        SharedLibs: 645M resident, 117M data, 101M linkedit.
+        MemRegions: 698266 total, 4785M resident, 252M private, 1631M shared.
+        PhysMem: 15G used (2379M wired, 4778M compressor), 288M unused.
+        VM: 375T vsize, 6144M framework vsize, 745618(0) swapins, 1185194(0) swapouts.
+        Networks: packets: 153209554/162G in, 78488298/19G out.
+        Disks: 73343810/1310G read, 49266136/1001G written.
+
+        PID   COMMAND %CPU MEM #TH STATE    TIME    
+        4610  node    0.0  82M 8   sleeping 00:00.11
+        Processes: 792 total, 2 running, 790 sleeping, 4537 threads 
+        2026/08/26 20:01:36
+        Load Avg: 2.37, 2.71, 2.39 
+        CPU usage: 9.83% user, 5.55% sys, 84.60% idle 
+        SharedLibs: 645M resident, 117M data, 101M linkedit.
+        MemRegions: 0 total, 0B resident, 252M private, 1631M shared.
+        PhysMem: 15G used (2355M wired, 4777M compressor), 302M unused.
+        VM: 375T vsize, 6144M framework vsize, 745618(0) swapins, 1185194(0) swapouts.
+        Networks: packets: 153209571/162G in, 78488311/19G out.
+        Disks: 73343810/1310G read, 49266136/1001G written.
+
+        PID   COMMAND %CPU MEM #TH STATE    TIME    
+        4610  node    0.0  82M 8   sleeping 00:00.11
+        Processes: 792 total, 2 running, 790 sleeping, 4536 threads 
+        2026/08/26 20:01:37
+        Load Avg: 2.37, 2.71, 2.39 
+        CPU usage: 10.18% user, 5.55% sys, 84.25% idle 
+        SharedLibs: 645M resident, 117M data, 101M linkedit.
+        MemRegions: 0 total, 0B resident, 252M private, 1631M shared.
+        PhysMem: 15G used (2431M wired, 4777M compressor), 314M unused.
+        VM: 375T vsize, 6144M framework vsize, 745618(0) swapins, 1185194(0) swapouts.
+        Networks: packets: 153209575/162G in, 78488315/19G out.
+        Disks: 73343810/1310G read, 49266136/1001G written.
+
+        PID   COMMAND %CPU MEM #TH STATE    TIME    
+        4610  node    0.0  82M 8   sleeping 00:00.11
+        Processes: 792 total, 3 running, 789 sleeping, 4539 threads 
+        2026/08/26 20:01:38
+        Load Avg: 2.37, 2.71, 2.39 
+        CPU usage: 10.8% user, 5.40% sys, 84.50% idle 
+        SharedLibs: 645M resident, 117M data, 101M linkedit.
+        MemRegions: 0 total, 0B resident, 252M private, 1631M shared.
+        PhysMem: 15G used (2449M wired, 4777M compressor), 275M unused.
+        VM: 375T vsize, 6144M framework vsize, 745618(0) swapins, 1185194(0) swapouts.
+        Networks: packets: 153209605/162G in, 78488341/19G out.
+        Disks: 73343810/1310G read, 49266136/1001G written.
+
+        PID   COMMAND %CPU MEM #TH STATE    TIME    
+        4610  node    0.0  82M 8   sleeping 00:00.11
+        Processes: 792 total, 5 running, 787 sleeping, 4534 threads 
+        2026/08/26 20:01:39
+        Load Avg: 2.37, 2.71, 2.39 
+        CPU usage: 9.8% user, 4.54% sys, 86.37% idle 
+        SharedLibs: 645M resident, 117M data, 101M linkedit.
+        MemRegions: 0 total, 0B resident, 252M private, 1631M shared.
+        PhysMem: 15G used (2346M wired, 4777M compressor), 286M unused.
+        VM: 375T vsize, 6144M framework vsize, 745618(0) swapins, 1185194(0) swapouts.
+        Networks: packets: 153209638/162G in, 78488366/19G out.
+        Disks: 73343810/1310G read, 49266136/1001G written.
+
+        PID   COMMAND %CPU MEM #TH STATE    TIME    
+        4610  node    0.0  82M 8   sleeping 00:00.11
+        Processes: 792 total, 3 running, 789 sleeping, 4542 threads 
+        2026/08/26 20:01:40
+        Load Avg: 2.42, 2.71, 2.40 
+        CPU usage: 10.11% user, 5.65% sys, 84.22% idle 
+        SharedLibs: 645M resident, 117M data, 101M linkedit.
+        MemRegions: 0 total, 0B resident, 252M private, 1631M shared.
+        PhysMem: 15G used (2366M wired, 4777M compressor), 279M unused.
+        VM: 375T vsize, 6144M framework vsize, 745618(0) swapins, 1185194(0) swapouts.
+        Networks: packets: 153209663/162G in, 78488383/19G out.
+        Disks: 73343810/1310G read, 49266136/1001G written.
+
+        PID   COMMAND %CPU MEM #TH STATE    TIME    
+        4610  node    0.0  82M 8   sleeping 00:00.11
+
+    Ölçüm devam ederken başka bi terminalde: -> ANLAMADIM?
+        "curl http://127.0.0.1:3000/cpu"
+        Beş saniyelik hesaplama sırasında %CPU değerinin belirgin biçimde yükselmesini bekliyoruz. Ayrıca bu döngü ana JavaScript thread’ini bloke ettiği için aynı anda gönderilen normal HTTP isteği gecikebilir.
+    Örnek Çıktı:
+        "CPU çalışması bitti: 146031421.3463269" -> ANLAMADIM? CPU ARTIŞINI NASIL GÖRÜNTÜLEYECEĞİM?
