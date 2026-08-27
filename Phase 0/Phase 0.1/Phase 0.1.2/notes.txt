@@ -1,0 +1,36 @@
+Minimum mental model
+    Process yaşam döngüsü:
+    Oluşturuldu
+    ↓
+    Çalışabilir / CPU’da çalışıyor
+    ↓
+    I/O, timer veya istek bekliyor
+    ↓
+    Tekrar çalışıyor
+    ↓
+    Normal tamamlanma, hata veya signal
+    ↓
+    Sonlanma ve exit status
+    ↓
+    Parent process sonucu toplar
+
+macOS ps çıktısında sık göreceğin durumlar:
+- R: Running/runnable
+- S: Bir olay veya I/O bekliyor
+- T: Durdurulmuş
+- Z: Sonlanmış fakat parent tarafından henüz toplanmamış zombie process
+Node.js process’i, event loop’ta timer, server veya bekleyen I/O gibi aktif bir iş kalmadığında doğal olarak sonlanır.
+
+**!!Konu bütünlüğü ile ilgili önemli bitiriş soruları: !!**
+
+Üç küçük exit-code deneyinin tahminleri ve gerçek sonuçları:
+
+SIGINT, SIGTERM ve SIGKILL çıktıları:
+
+Her deneyden sonra shell’in gördüğü exit code:
+
+shutdown.log içeriği:
+
+Şu iki sorunun kendi cümlelerinle cevabı:
+- Signal ile exit code arasındaki fark nedir?
+- Neden production uygulamasında ilk tercih SIGKILL değildir?

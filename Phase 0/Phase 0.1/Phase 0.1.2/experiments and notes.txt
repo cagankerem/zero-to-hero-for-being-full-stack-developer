@@ -1,0 +1,42 @@
+Exit code
+    Exit code, process’in parent process’e bıraktığı sayısal sonuçtur:
+        - 0: Başarılı
+        - 0 dışı: Başarısız veya özel bir durum
+        - 1: Genel hata olarak sık kullanılır
+        - Diğer değerlerin anlamını uygulama tanımlar; evrensel olduklarını varsayma
+    Shell’de yalnızca en son komutun sonucunu görürsün:
+        "printf 'exit=%s\n' "$?""
+
+İlk deney
+    Her komuttan önce çıkış kodunu tahmin et, sonra çalıştır:
+        Komut: "node -e 'console.log("başarılı")'
+                printf 'exit=%s\n' "$?""
+            Tahmin: "başarılı"
+            Gerçek Çıktı: başarılı
+        Komut: "node -e 'process.exitCode = 7'
+                printf 'exit=%s\n' "$?""
+            Tahmin: 7
+            Gerçek Çıktı: exit=7
+        Komut: "node -e 'throw new Error("kasıtlı hata")'
+                printf 'exit=%s\n' "$?""
+            Tahmin: Error: "kasıtlı hata"
+            Gerçek Çıktı:   throw new Error("kasıtlı hata")
+                            ^
+
+                            Error: kasıtlı hata
+                                at [eval]:1:7
+                                at runScriptInThisContext (node:internal/vm:209:10)
+                                at node:internal/process/execution:446:12
+                                at [eval]-wrapper:6:24
+                                at runScriptInContext (node:internal/process/execution:444:60)
+                                at evalFunction (node:internal/process/execution:279:30)
+                                at evalTypeScript (node:internal/process/execution:291:3)
+                                at node:internal/main/eval_string:74:3
+
+                            Node.js v22.20.0
+                            exit=1
+    Önemli ayrım:
+        process.exitCode = 7;
+            Process’in doğal biçimde tamamlanmasına izin verir ve sonunda 7 döndürür.
+        process.exit(7);
+            Process’i hemen sonlandırmaya zorlar. Bekleyen asenkron çıktı veya cleanup yarıda kalabilir. Bu nedenle çoğu normal hata akışında process.exitCode daha güvenli varsayılandır. Node.js 22.20.0 resmi dokümantasyonu da process’in doğal sonlanmasına izin verilmesini önerir.
