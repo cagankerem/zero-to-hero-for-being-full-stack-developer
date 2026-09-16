@@ -6,7 +6,7 @@ Bu repository henüz boş olsa bile aşağıdaki matris eğitim rotasının prod
 
 ### Kesin ana yön
 
-- JavaScript ve Node.js çalışma modeli
+- JavaScript/TypeScript kod okuma, değiştirme ve gerekli Node.js kullanımı
 - TypeScript, `strict` mode
 - React
 - Next.js App Router
@@ -32,7 +32,7 @@ Bu araçların API'lerini ezberletme. Alttaki HTML, CSS, erişilebilirlik, compo
 
 ### Karşılaştırmalı teknoloji okuryazarlığı
 
-Ana production stack'i her derste değiştirme; fakat seçili araçların neden seçildiğini görünmez bırakma. İlgili fazlarda aynı problem alanındaki güncel alternatifleri, farklı abstraction seviyelerini ayırarak incelet:
+Ana production stack'i her derste değiştirme; fakat seçili araçların neden seçildiğini görünmez bırakma. Yalnız gerçek seçim gerektiğinde aynı problem alanındaki alternatifleri, farklı abstraction seviyelerini ayırarak incelet. Aşağıdaki liste zorunlu karşılaştırma ödevi değildir:
 
 - Routing'de Next.js App Router, React Router'ın güncel Declarative/Data/Framework modları ve TanStack Router.
 - Styling/component yaklaşımında düz CSS, Tailwind CSS, headless primitive ve hazır component library.
@@ -54,7 +54,7 @@ Bu adaylardan söz edilmesi production kararını değiştirmez. Karşılaştır
 
 Bu alanlarda bir ürünü olmuş bitmiş karar gibi sunma. Önce gereksinim ve kısıtları çıkar; en az iki uygun seçeneği resmi kaynak, küçük spike veya benchmark ile karşılaştır; kararı ADR ile kaydet. Öğrenme görevleri sağlayıcıdan bağımsız kavramları hedeflesin.
 
-Test pratiğini production test araçlarının seçimine kadar erteleme. Faz 0'da dilin/platformun yerleşik imkânları veya en küçük geçici test harness'i ile test yazmaya başla; bunun eğitim amaçlı geçici seçim olduğunu kaydet. Production unit/integration/E2E araçlarını ihtiyaçlar görünür olduğunda kanıtla seç ve Faz 9'da test mimarisi ile CI entegrasyonunu derinleştir.
+İlk ürün davranışından itibaren ilgili doğrulamayı yap. Faz 0'da mevcut komutu çalıştırıp çıktısını okumak yeterlidir; sırf araç öğretmek için ayrı test harness'i yazdırma. Test iskeletini AI hazırlayabilir; kritik senaryonun beklenen sonucunu öğrenci belirler. Araç seçimini ilk gerçek ihtiyaca bağla; Faz 9 mevcut test stratejisini bütünleştirir.
 
 ### Production kararı olmayan prototip teknolojileri
 
@@ -67,151 +67,78 @@ Test pratiğini production test araçlarının seçimine kadar erteleme. Faz 0'd
 
 Bunları production stack'e kendiliğinden taşıma. Yalnız mevcut prototipi anlamak, migration riskini görmek veya alternatif mimariyi karşılaştırmak için ele al. Production ana yönü şu an **Next.js + Vercel + Supabase/PostgreSQL**'dir.
 
-## 8. Öğrenme derinliği
+## 8. Öğrenme derinliği ve AI'a iş devri
 
-Her teknolojiyi aynı derinlikte öğretme. Buradaki “derinlik” öncelikle öğrencinin **kod yazma, kullanma, test etme ve debug etme bağımsızlığını** ifade eder; engine/runtime internallerini veya akademik teoriyi ayrıntılı anlatma zorunluluğu değildir. Konu başlığı müfredatta geçiyor diye bütün alt teorisini öğretme.
+15 Eylül 2026 itibarıyla eski A/B/C/D ustalık sınıfları yerine aşağıdaki **K/U/F/J** sistemi kullanılır. Hedef AI destekli ürün mimarisi ve teslim yetkinliğidir. Öğretim önceliği ile kodu kimin yazdığı ayrı kararlardır.
 
-Her başlıkta önce uygulama seviyesini belirle:
+### 8.1 Sınıflar ve bitiş koşulları
 
-- **Kodlama çekirdeği:** Öğrenci projede sık kullanacağı API, syntax ve pattern'i kendisi yazar.
-- **Operasyonel mental model:** Doğru kod ve debug için gereken en küçük arka planı bilir.
-- **Farkındalık:** Belirtiyi ve ne zaman araştıracağını bilir; iç yapıyı açıklaması beklenmez.
-- **İhtiyaç halinde derinleşme:** Yalnız gerçek feature, bug, güvenlik veya performans kararı tetikler.
+| Etiket | Öğrencinin kazanımı | AI'ın rolü | Yeterli kanıt / durma kuralı |
+|---|---|---|---|
+| **K — Karar ve doğrulama çekirdeği** | Gereksinimi, mimari sınırı, iş kuralını ve doğruluğu değerlendirmek | Seçenek, kod ve test taslağı üretebilir | Öğrenci ilgili kararı açıklar, kodda yerini gösterir ve senaryoyla doğrular; ezberden bütün implementasyon gerekmez |
+| **U — AI ile uygulama** | İşi tarif etmek, çıktıyı okumak, kullanmak ve incelemek | Rutin uygulamanın tamamını yapabilir | İstenen davranış, ilgili diff/config ve doğrulama anlaşılmıştır; elle yeniden üretim veya tekrar labı yok |
+| **F — Farkındalık** | Terimi, görünen etkisini ve ne zaman yardım/araştırma gerektiğini tanımak | Kısa açıklama/örnek verir | Toplam 5–10 dakika içinde kapanır; zorunlu ödev, test, quiz, video veya geçiş kapısı yok |
+| **J — Gerektiğinde öğren** | Mevcut ürün için henüz gerekli değil | Somut ihtiyaçta araştırma/uygulama desteği verir | Aktif ders ve zorunlu değerlendirme yok; tetikleyici oluşursa dar hedefle açılır |
 
-### A — Kodlama ve kullanımda derin ustalık
+K/U etiketi bütün bir teknolojiye sınırsız derinlik vermez. Aynı araçta iş kuralı K, tekrarlı kod U, iç çalışma modeli F ve ileri kullanım J olabilir.
 
-Öğrenci bu alanlarda sıfırdan kod yazabilmeli, test edebilmeli, debug yapabilmeli ve tasarım kararını açıklayabilmelidir:
+Bir konu için karar sırası:
+1. Ürün davranışı, güven sınırı, veri bütünlüğü veya teslim kararını öğrenci değerlendirmeli mi? İlgili kısmı **K**.
+2. İş tanımlanmış, tekrarlanabilir ve çıktısı kontrol edilebilir mi? Uygulama kısmı **U**.
+3. Yalnız terimi/belirtiyi tanımak yeterli mi? **F**.
+4. Şu an bunlardan hiçbirine hizmet etmiyor mu? **J**, yeni zorunlu ders açma.
 
-- JavaScript: scope, closure, object/array modeli, module sistemi, hata yönetimi, promise ve async/await. Event loop yalnız asenkron kod sırası, gecikme ve blocking etkisini doğru kullanacak minimum modelde tutulur; engine fazları ve bütün queue istisnaları A seviyesi değildir.
-- TypeScript strict: narrowing, union, generic, utility type, type inference, `unknown`, boundary typing ve hatalı type assertion riskleri.
-- Node.js ve web runtime sınırları; package manager, `package.json`, semver ve lockfile davranışı.
-- Semantic HTML, temel CSS, responsive layout ve browser DevTools.
-- React: component composition, props, state, render modeli, controlled input, effect, context ve state yerleşimi.
-- Next.js App Router: routing, layout, Server/Client Component sınırı, Server Action, Route Handler, SSR, caching ve error/loading sınırları.
-- HTTP: method, status, header, cookie, cache, CORS, request/response yaşam döngüsü ve idempotency.
-- Zod ve runtime boundary validation.
-- React form mantığı ve React Hook Form.
-- SQL/PostgreSQL: modelleme, JOIN, constraint, transaction, isolation, index, query plan ve migration.
-- Authentication ile authorization ayrımı; session/JWT ve Supabase RLS policy yazımı/testi.
-- Test tasarımı, debugging, Git ve terminal kullanımı.
-- Güvenli kodlama: input/output sınırları, XSS, CSRF, SQL injection, secret yönetimi, least privilege ve güvenli dosya yükleme.
-- Temel veri yapıları, algoritmik karmaşıklık, refactoring ve kod okunabilirliği.
+AI'ın bir parçayı kolay üretmesi doğruluğunun kolay anlaşılacağını garanti etmez. Yetkilendirme, para hesabı, veri silme ve migration gibi konularda üretim U olabilir; karar ve doğrulama K olarak kalır.
 
-### B — Uygulama yeterliliği
+### 8.2 Konu bazında bağlayıcı derinlik matrisi
 
-Öğrenci bunları production'da güvenle yapılandırabilmeli, kullanabilmeli ve yaygın hatalarını teşhis edebilmelidir; araç internallerini ezberlemesi gerekmez:
+| Konu | K: öğrencinin sahiplenmesi gereken | U: AI ile yapılabilecek | F / J: sınır |
+|---|---|---|---|
+| Ürün ve gereksinim | Kullanıcı problemi, kapsam, kabul kriteri, öncelik, başarının ölçüsü | Brief/issue/doküman taslağı | Kapsam dışı özellikler J |
+| AI ile geliştirme | Görev bölme, bağlam, erişim sınırı, diff review, kanıt isteme, kabul/düzeltme | Kod arama, uygulama, test çalıştırma, özet | Araç internalleri F; çoklu agent ve özel araç altyapısı J |
+| JavaScript | Veri dönüşümünü, koşulu, yan etkiyi, hata ve async akışını okumak; gerektiğinde küçük davranış değişikliği | Tekrarlı fonksiyon, veri eşleme, standart async kod | Prototype zinciri ayrıntısı, metaprogramming, generator J; event-loop internalleri F |
+| TypeScript | Veri/sözleşme tipi, null/undefined, union/narrowing, dış veriyi doğrulama, riskli assertion'ı fark etme | Tip, basit generic ve config taslağı | İleri type gymnastics, recursive conditional type ve compiler internalleri J |
+| Node.js | Server/client ve secret sınırı, uygulama hatası ile ortam hatasını ayırma | Script, paket/config, SDK ve standart IO bağlantısı | Process/thread/worker modeli F; stream/backpressure, worker/child-process ve özel shutdown kodu J |
+| HTML/CSS/React | Kullanıcı akışı, semantik, erişilebilirlik, component sınırı, state/veri akışı, form/hata davranışı | JSX, CSS/Tailwind, component ve responsive düzen iskeleti | CSS araç API ezberi yok; browser rendering ve React reconciler F; ileri optimizasyon J |
+| Form ve UI araçları | Girdi sınırı, server doğrulaması, submit/duplicate, erişilebilir hata | React Hook Form/Zod bağlantısı, shadcn/ui ve yardımcı config | Bütün helper/component API'leri J; seçili kullanım U |
+| Next.js/HTTP | Server/client, read/mutation, yetki, cache/gizlilik, durum kodu, hata ve veri akışı | Route/layout/handler/action iskeleti | Bütün router özellikleri ve alternatif router uygulamaları J; framework internalleri F |
+| SQL/veri | İlişki, sahiplik, constraint, veri ömrü, transaction gereği, migration etkisi; sorguyu okuyup doğrulama | DDL/DML, JOIN ve migration taslağı | MVCC/index iç yapısı F; DBA, tuning, replication, ileri SQL J; yavaş sorguda hedefli EXPLAIN U |
+| Auth/RLS/Storage | Kimlik/yetki ayrımı, ownership, rol matrisi, veri sızıntısı ve negatif test | SDK bağlantısı, policy ve upload kodu taslağı | Kriptografi F; kullanılmayan sağlayıcı özellikleri J |
+| Backend/entegrasyon | İş kuralları, modül/API sözleşmesi, veri tutarlılığı, hata ve gerektiğinde idempotency | Standart CRUD, adapter, DTO mapping, fixture | Queue/outbox/distributed coordination üründe gerekmedikçe J |
+| Test ve debug | Beklenen sonuç, riskli senaryo, testin kusuru yakalayıp yakalamadığı, hata kanıtı | Test/fixture kodu, log analizi, reproducer, düzeltme taslağı | Test framework internalleri F; araç kataloğu ve sentetik bug serileri J |
+| Deployment/operasyon | Ortam/secret ayrımı, migration, smoke test, gözlem ve geri dönüş kararı | CI/config, deployment komutları ve runbook taslağı | CPU/process/network temeli F; Linux yönetimi, Docker elle kurulum, Kubernetes/multi-region J |
+| Güvenlik/performans | Kullanıcı verisini koruma, auth/validation, kaynak/maliyet sınırı, ölçüme göre karar | Tarama, ölçüm, logging/config ve düzeltme taslağı | Crypto/protokol internalleri F; ileri güvenlik araştırması ve tuning J |
+| Algoritmalar | List/map/set seçimi, arama/sıralama, büyük input maliyetini fark etme | Standart veri dönüşümü ve algoritma kodu | Pratik Big-O F; linked list/tree/graph implementasyonu ve ileri algoritmalar J |
+| Mimari | En basit yeterli tasarım, veri/güven sınırı, bağımlılık, maliyet, trade-off ve değişim etkisi | Diyagram ve ADR taslağı, repo analizi | Pattern kataloğu F; microservice, CQRS/event sourcing ve formel system design J |
 
-- Tailwind CSS, shadcn/ui, Base UI, Lucide, CVA, `clsx`, `tailwind-merge`.
-- Supabase browser/server client'ları, Auth, Storage, signed URL ve local development.
-- Vercel deployment, environment ayrımı ve preview akışı.
-- CI pipeline, lint, format, type-check, build ve test kapıları.
-- Structured logging, correlation ID, health check, metric ve alarm temelleri.
-- Accessibility testleri ve web performans ölçümü.
-- Backup/restore, migration rollout ve runbook uygulaması.
-- Docker/container temelleri; image, process, port, network ve volume kullanımı. Container kullanımı production mimarisi için otomatik karar değildir.
+Bu tablo yönlendirme sınırıdır. Müfredatta K/U kapsamı daraltılmışsa ilgili fazın somut çıktısı esas alınır; tabloyu bütün satırlardan zorunlu sınav üretmek için kullanma.
 
-### C — Sınır/risk kavrayışı ve temsili uygulama
+### 8.3 Özellikle kısaltılan başlangıç konuları
 
-Öğrenci bu alanlarda use case'i, güven sınırını, temel riski ve güvenli uygulama kalıbını anlayabilmeli; sağlayıcı veya sistem internallerini derinlemesine öğrenmesi beklenmez. Sağlayıcı API'sini ancak karar verildiğinde küçük bir temsili uygulamayla kullanır:
+| Konu | Yeterli farkındalık | Zorunlu olmayan işler |
+|---|---|---|
+| CPU, bellek, disk, process, thread ve port ilişkisi | Uygulamanın çalıştığı süreç, kaynak kullanımı ve bağlantı adresini tanımak; port çakışmasını bir örnekle görmek | CPU/bellek benchmark'ı, thread modeli deneyi, ayrıntılı process incelemesi |
+| Process yaşam döngüsü, exit code ve signal | Programın başlayıp bitebildiğini, hata çıktısını ve güvenli durdurmayı tanımak; gerektiğinde komutu AI/dokümanla bulmak | Lifecycle lab, signal/exit-code kataloğu, shutdown yarışları, cleanup implementasyonu |
+| DNS/TCP/TLS ve browser çalışma akışı | İsteğin kabaca hangi bileşenlerden geçtiğini ve sorun katmanını tanımak | Paket/protokol internalleri, handshake algoritması veya browser engine dersi |
 
-- AI provider adapter, structured output, prompt versioning, Zod doğrulaması, kota, maliyet ve fallback.
-- Hosted checkout, imzalı webhook, subscription lifecycle, entitlement, idempotency ve reconciliation.
-- Error tracking ve product analytics sağlayıcıları.
-- CDN, WAF, DNS, HTTPS, rate limiting ve incident response.
-- KVKK, veri minimizasyonu, retention ve profesyonel hukuk incelemesi gerektiren sınırlar.
-- Managed platform operasyonları ve ileri ölçekleme seçenekleri.
+Bu konular bazı uzmanlık ve operasyon bağlamlarında önemlidir; **bu programın başlangıcında ayrıntılı öğrenmenin getirisi düşüktür**. Öğrencinin bunları bitirmiş olması yeni sınav veya tekrar gerektirmez. Gerçek port hatası çıktığında çözümü göstermek, port konusunu yeniden tam derse açmak değildir.
 
-### D — Farkındalık ve karşılaştırma
+### 8.4 Derinleşme eşiği
 
-Alternatif framework, router, runtime, ORM, database veya cloud ürünlerini ana kavramı netleştiriyor, mevcut seçimin kökenini açıklıyor ya da gerçek bir kararı destekliyorsa karşılaştır. Öğrenci en azından abstraction seviyesi, çözülen önceki problem, güncel alternatifin yetenekleri, migration maliyeti ve yanlış kullanım bağlamını açıklayabilmelidir. Teknoloji listesi ezberletme ve sırf yeni veya popüler olduğu için müfredata araç ekleme.
+Yalnız öğrencinin açık isteği veya gerçek feature/bug/güvenlik/veri bütünlüğü/performans ihtiyacı tetikler. Açmadan önce olay/karar, dar soru ve bitiş koşulu belirtilir. Varsayımsal büyük ölçek, mentorun kendi ürettiği karmaşık lab veya bir roadmap düğümü tetikleyici değildir.
 
-Kriptografik primitive, kart işleme altyapısı, React reconciler, event-loop fazları, OS scheduler, garbage collector veya Tailwind compiler gibi internalleri sıfırdan yazdırma ya da ayrıntılı ezberletme. Bunların kod üzerindeki görünür etkisini ve güvenlik/çalışma sınırını sade biçimde anlat; battle-tested implementation ve güvenli varsayılan kullanmayı öğret.
+Örneğin gerçek uygulama timeout yaşıyorsa log/ölçüm ile ilgili akışı incele ve çöz. Bunu V8/libuv, OS scheduler ve bütün worker modellerini öğrenme zorunluluğuna dönüştürme.
 
-## 9. Sürekli gelişim eksenleri
+## 9. Her ürün diliminde gelişen beceriler
 
-Aşağıdaki eksenler ayrı bir “son bölüm” değildir; her fazda uygun ölçüde uygulanır.
+Ayrı teorik ders dizileri yerine şu beceriler çalışan ürün üzerinde geliştirilir:
 
-### 9.1 Profesyonel geliştirme alışkanlıkları
+- **Ürün kararı:** Kullanıcı sonucu, kapsam ve ölçülebilir kabul kriteri.
+- **Mimari okuma:** UI → server → veri/entegrasyon akışı; state ve güven sınırları.
+- **AI'a iş verme:** Küçük görev, doğru bağlam, kısıt, doğrulama ve açık teslim çıktısı.
+- **Kod inceleme:** Davranış değişikliği, bağımlılık ve veri etkisi; gerekirse küçük düzeltme.
+- **Doğrulama:** Kritik olumlu/olumsuz senaryo, gerçek çıktı, güvenlik ve erişilebilirlik.
+- **Teslim:** Küçük Git değişikliği, çalışan preview, migration ve geri dönüş kanıtı.
+- **Karar geliştirme:** Gerçek geri bildirimle kapsamı veya tasarımı düzeltme.
 
-- Terminalde yön bulma, komut yardımını okuma ve güvenli komut çalıştırma.
-- Git'te küçük ve anlamlı commit, branch, merge/rebase farkı, conflict çözme ve geçmiş okuma.
-- `README`, changelog, API sözleşmesi, migration notu ve runbook yazma.
-- Resmi dokümantasyonda sürüm, önkoşul, uyarı, örnek ve changelog okuma.
-- Bir teknolojinin overview/design, release note, migration guide ve rakip ürünün güncel dokümanını birlikte okuyarak tarihsel iddia ile bugünkü durumu ayırma.
-- Başkasının kodunu okumak; çağrı zinciri, veri akışı ve yan etki haritası çıkarmak.
-- Code review'da doğruluk, güvenlik, test, okunabilirlik ve kapsam üzerinden kanıtlı geri bildirim vermek.
-- İş gereksinimini acceptance criteria, edge case ve teknik görevlere dönüştürmek.
-- Bilinmeyeni açıkça işaretlemek; varsayım, karar ve riskleri birbirinden ayırmak.
-- Teknik İngilizce terimleri tanımak ve exact hata mesajıyla etkili arama yapabilmek.
-
-### 9.2 Kalite ve bağımsız problem çözme
-
-- Her fazda test yazmak ve test çıktısını yorumlamak.
-- Her fazda en az bir kasıtlı bug, minimal reproduction ve regression testi çözmek.
-- Debug günlüğünde gözlem, hipotez, deney, sonuç ve kök nedeni ayırmak.
-- Linter, formatter, type checker, test runner ve build çıktısını ezbere düzeltmek yerine anlamak.
-- Refactoring öncesinde davranışı testle sabitlemek.
-- Happy path kadar invalid input, boş durum, sınır değer, timeout, concurrency ve yetki reddini düşünmek.
-- Kopyalanan veya AI tarafından önerilen kodun her satırını açıklamak ve bağımsız test etmek.
-- Gecikmeli tekrar, aralıklı hatırlama ve önceki konuları yeni bağlamda yeniden kullanmak.
-
-### 9.3 Güvenlik, veri ve kullanıcı kalitesi
-
-- Input boundary, authentication, authorization, output encoding ve secret sınırını her özellikte göstermek.
-- En az ayrıcalık, veri minimizasyonu, retention ve log redaction uygulamak.
-- Erişilebilirliği semantic HTML'den başlayarak her UI görevinin acceptance criteria'sına koymak.
-- Performansı tahminle değil ölçüm, profiler, query plan veya gerçek metrikle değerlendirmek.
-- Kullanıcı hata durumlarını, loading/empty/retry akışlarını ve veri kaybı riskini tasarımın parçası saymak.
-- Güvenlik veya hukuki iddiayı sağlayıcı pazarlama metniyle değil resmi rehber ve uzman sınırıyla ele almak.
-
-### 9.4 Bilgisayar bilimi ve DSA paralel şeridi
-
-Bu şerit ana ürün geliştirmesinden kopuk teori veya LeetCode ezberine dönüşmez. Yalnız sık kullanılan yapılar kodlanır; yüksek teorik yük taşıyan konular gerçek bir proje ihtiyacı yoksa farkındalık düzeyinde kalır. Öğrenciden formel ispat, runtime/OS internali veya ileri algoritma ezberi beklenmez.
-
-**Temel matematik ve hesaplama modeli:**
-
-- Boolean mantığı, kümeler, ilişkiler ve fonksiyonları yalnız koşul, koleksiyon ve sorgu yazımında kullanıldığı kadar ele alma.
-- İkili/onaltılı gösterim, bit/byte, signed/unsigned sayı ve Unicode/UTF-8'i dosya, encoding veya debug ihtiyacını anlayacak farkındalıkta tutma.
-- IEEE 754 floating-point sınırları ve para hesabına etkisi.
-- CPU, bellek, stack/heap, process, thread ve I/O ayrımını “hangi kod neden bloklar veya kaynak tüketir?” sorusunu cevaplayacak en küçük modelle anlatma.
-- File descriptor, buffer, stream, blocking/non-blocking I/O ve backpressure'i yalnız dosya/ağ kodunu güvenli yazma ve yaygın belirtiyi tanıma düzeyinde ele alma.
-- Shared state, race condition, atomicity, mutex, semaphore, deadlock ve starvation terimlerini tanıma; bu primitive'lerin implementation ayrıntısını öğretmeme. JavaScript'in tek ana thread mental modelinin database ve dağıtık mutation yarışlarını engellemediğini kod örneğiyle gösterme.
-- Deterministik algoritma, invariant, precondition ve postcondition.
-- Input büyüdükçe yaklaşık zaman/alan maliyetini Big-O ile pratik düzeyde karşılaştırma; Big-Theta, amortized analysis ve formel ispatı ihtiyaç halinde derinleşmeye bırakma.
-
-**Temel veri yapıları ve algoritmalar:**
-
-- Array, string, object/hash map, set, stack ve queue'yu gerçek veri işleme görevlerinde kullanma.
-- Linear/binary search; stable/unstable sorting ve temel sorting trade-off'ları.
-- Recursion ile iteration; call stack ve base case.
-- Linked list, tree, binary search tree, heap/priority queue, trie ve graph yapılarını kullanım problemi düzeyinde tanıma; proje veya değerlendirme açıkça gerektirmedikçe implementation'ı zorunlu tutmama.
-- Breadth-first search, depth-first search ve graph gösterimlerini yalnız ilişki/ağaç problemi gerçekten gerektiriyorsa küçük örnekle uygulama.
-- Hashing, collision, equality ve identity kavramları.
-
-**Problem çözme kalıpları:**
-
-- Frequency map, basit two pointers, pagination/sorting ve arama kalıplarını ürün koduyla ilişkilendirme.
-- Sliding window, prefix sum, divide and conquer, greedy, backtracking, dynamic programming, topological ordering, shortest path ve union-find'i ihtiyaç halinde açılan opsiyonel problem çözme araçları sayma; faz geçişi için topluca zorunlu tutmama.
-- Veri yapısını operasyon maliyetine göre seçme; “hangi yapı daha popüler?” yerine read/write/search gereksinimini sorma.
-- Çözüm öncesi örnek yürütme, brute-force baseline, optimizasyon ve correctness gerekçesi.
-
-**Production bağlantıları:**
-
-- Indexlerin tree/hash yapılarıyla ilişkisi.
-- Queue, retry ve idempotency'nin dağıtık iş akışlarıyla ilişkisi.
-- Cache eviction ve bounded-memory düşüncesi.
-- Pagination, sorting ve arama maliyetleri.
-- Büyük input'un event loop, bellek ve denial-of-service riskine etkisi.
-
-### 9.5 Tasarım ve mimari paralel şeridi
-
-- Cohesion, coupling, dependency direction ve information hiding.
-- Pure function, side effect, command/query ayrımı ve state ownership.
-- YAGNI, KISS, DRY'nin bağlama bağlı kullanımı; yanlış abstraction maliyeti.
-- Composition over inheritance ve interface/contract düşüncesi.
-- Domain language, entity, value object, invariant, DTO ve persistence model ayrımı.
-- ADR, C4 bağlam/container görünümü, sequence diagram, data-flow ve threat-model diyagramları.
-- Functional/non-functional requirement, capacity tahmini ve failure-mode analizi.
-- Build-versus-buy, managed-versus-self-hosted ve reversible-versus-irreversible karar ayrımı.
-
-Önerilen öğrenme dağılımı, öğrencinin zamanına göre uyarlanmak üzere yaklaşık olarak şöyledir: %70 proje içinde kod yazma/değiştirme, %20 test-debug-code review, %10 minimum konsept/dokümantasyon/tekrar. Karmaşık teoriyi zorunlu kapsama ekleyerek bu oranı tersine çevirme; fakat correctness, güvenlik veya veri bütünlüğü için gereken minimum modeli atlama.
+Her oturumda bütün başlıklardan ayrı ödev çıkarma. AI ile uygulama çalışma süresinin doğal parçasıdır. Bir ürün dilimi için yaklaşık dağılım **%25 gereksinim/mimari/görev tanımı, %45 AI ile uygulama ve kod okuma, %25 review/test/teslim, %5 hedefli kavram/kaynak** olabilir. Bu bir pedagojik başlangıç önerisidir, araştırmayla kanıtlanmış oran veya süre kotası değildir.

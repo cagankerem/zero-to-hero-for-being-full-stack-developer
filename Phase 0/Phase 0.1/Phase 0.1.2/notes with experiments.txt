@@ -40,3 +40,25 @@ Exit code
             Process’in doğal biçimde tamamlanmasına izin verir ve sonunda 7 döndürür.
         process.exit(7);
             Process’i hemen sonlandırmaya zorlar. Bekleyen asenkron çıktı veya cleanup yarıda kalabilir. Bu nedenle çoğu normal hata akışında process.exitCode daha güvenli varsayılandır. Node.js 22.20.0 resmi dokümantasyonu da process’in doğal sonlanmasına izin verilmesini önerir.
+
+
+**Signal nedir?
+        Signal, işletim sisteminin veya başka bir process’in hedef process’e gönderdiği kısa kontrol bildirimidir.
+    En önemlileri:
+
+    SIGINT:	Terminalde Ctrl+C | Kullanıcı kesintisi
+    SIGTERM:	kill PID, process manager, deployment |	Kontrollü kapanma isteği
+    SIGKILL:	kill -KILL PID | Zorla ve hemen sonlandırma
+    SIGSTOP:	kill -STOP PID | Process’i duraklatma
+    SIGCONT:	kill -CONT PID | Durdurulmuş process’i sürdürme
+
+    !!`kill` komutunun ismi biraz yanıltıcıdır:
+        `kill` komutu process’i her zaman doğrudan kapatmaz; ona bir signal gönderir. `SIGTERM` process tarafından yakalanabilir ve process kapanmadan önce temizlik yapabilir. 
+        `SIGKILL` ve `SIGSTOP` ise yakalanamaz; işletim sistemi bunları doğrudan uygular.
+
+Deney 1 — SIGINT
+    Terminal 1:
+        "node lifecycle-lab.mjs
+         printf 'shell exit=%s\n' "$?""
+    Birkaç heartbeat sonrasında Ctrl+C kullan.
+    Beklenen sıra hakkında çalıştırmadan önce tahmin yaz:
