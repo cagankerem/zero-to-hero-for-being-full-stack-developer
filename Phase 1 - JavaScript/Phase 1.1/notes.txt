@@ -1,0 +1,234 @@
+PHASE 1.1 — VALUES, DATA TYPES, AND VARIABLES
+==========================================
+
+Source: Our JavaScript mentoring conversation.
+Format: English recap with corrected explanations and examples.
+Prepared: 2026-10-07.
+
+Purpose
+-------
+Read a small piece of JavaScript, identify the values and their types,
+and understand where values are assigned or reassigned. Use this knowledge
+to review AI-generated code against a product requirement.
+
+These notes document the concepts discussed, rather than certify mastery.
+Code examples use English identifiers and should be read independently
+unless a section explicitly describes them as a continuation.
+
+
+1. VALUES AND VARIABLES
+-----------------------
+
+A value is a piece of data used by a program. Examples include:
+
+- "Deniz": text.
+- 1500: a number.
+- false: a Boolean value.
+
+A variable gives us a name through which we can access a value.
+
+Example: storing information about a proposal.
+
+    const customerName = "Deniz";
+    let proposalAmount = 1500;
+    let sent = false;
+
+Reading customerName gives us the value "Deniz".
+Reading proposalAmount gives us the value 1500.
+Reading sent gives us the value false.
+
+The name sent gives the Boolean a meaning in this product:
+true means the proposal has been sent; false means it has not been sent.
+
+
+2. READING A VARIABLE DECLARATION
+--------------------------------
+
+    const customerName = "Deniz";
+
+- const declares a variable that cannot be reassigned.
+- customerName is the variable's name.
+- = assigns the value on the right to the variable on the left.
+- "Deniz" is the assigned value.
+- The semicolon marks the end of the statement.
+
+Here, = performs assignment. It does not ask whether two values are equal.
+
+
+3. THE DATA TYPES DISCUSSED
+---------------------------
+
+STRING
+
+A string represents text. The examples in this lesson use quotation marks.
+
+    const customerName = "Deniz";
+    const amountAsText = "1500";
+
+Both values are strings. A string can contain digits without becoming a number.
+
+NUMBER
+
+A number represents numeric data.
+
+    const proposalAmount = 1500;
+    const anotherAmount = 1500.5;
+
+Both values have the JavaScript type number.
+1500 is mathematically an integer, but its JavaScript type is still number.
+The ordinary numeric values discussed here do not have separate integer
+and decimal JavaScript types.
+
+For the numeric value in our example, removing the quotes changes the literal
+from the string "1500" to the number 1500:
+
+    const proposalAmount = 1500;
+
+This is a change to the source code. It is not an explanation of how to
+convert an arbitrary text value received from a user at runtime.
+
+BOOLEAN
+
+A Boolean has two possible values: true and false.
+Write these values without quotation marks.
+
+    let sent = false;
+
+false is a real value. It does not mean that no value has been assigned.
+"false", with quotation marks, is a string instead.
+
+
+4. CONST, LET, AND VAR
+----------------------
+
+Use const when the variable does not need to be reassigned.
+Use let when the same variable needs a new value later in the relevant flow.
+
+    const customerName = "Deniz";
+    let proposalAmount = 1500;
+
+The important question is: Will this variable receive another assignment?
+
+Receiving data from a user does not, by itself, require let.
+Using a value in a calculation does not, by itself, require let either.
+
+var also allows reassignment and would work in the simple example discussed.
+For our examples, use const or let. The scope differences involving var
+were deferred and are not part of this lesson's detailed coverage.
+
+IMPORTANT LIMIT OF CONST
+
+const prevents assigning a different value to the same variable.
+It does not guarantee that the contents of an object or array cannot change.
+Detailed object and array examples belong to the later topic on those values.
+
+const also does not validate whether a value or a business rule is correct.
+
+
+5. REASSIGNING AN EXISTING VARIABLE
+----------------------------------
+
+    let proposalAmount = 1500;
+    let sent = false;
+
+    proposalAmount = 1800;
+    sent = true;
+
+The last two lines update existing variables. They do not declare new ones,
+so let is not repeated.
+
+After these lines, proposalAmount holds 1800 and sent holds true.
+
+Incorrect example — shown only to explain the error:
+
+    const proposalAmount = 1500;
+    proposalAmount = 1800;
+
+The second line attempts to reassign a const variable and causes a runtime
+error. If this reassignment is required, declare proposalAmount with let.
+
+
+6. ASSIGNMENT DIRECTION AND A DISCOUNT EXAMPLE
+---------------------------------------------
+
+In an assignment, evaluate the expression on the right first, then assign
+the resulting value to the variable on the left.
+
+Incorrect example — invalid JavaScript:
+
+    proposalAmount * 0.2 = proposalAmount;
+
+The calculation proposalAmount * 0.2 is not a valid assignment target.
+For the simple assignments in this lesson, the target is a variable name.
+
+For an original amount of 1500:
+
+- 1500 * 0.2 gives the 20% discount amount: 300.
+- 1500 * 0.8 gives the remaining amount after that discount: 1200.
+
+UPDATE THE EXISTING AMOUNT
+
+    let proposalAmount = 1500;
+    proposalAmount = proposalAmount * 0.8;
+
+The right side uses the current value, 1500. The result, 1200, is then
+assigned back to proposalAmount.
+
+KEEP THE ORIGINAL AND CALCULATE A SEPARATE AMOUNT
+
+    const proposalAmount = 1500;
+    const discountedAmount = proposalAmount * 0.8;
+
+proposalAmount stays 1500. discountedAmount holds 1200.
+Both declarations can use const because neither variable is reassigned.
+
+This approach is useful when the screen needs to show both amounts.
+Choose based on which data the product needs to preserve and which
+variables actually need reassignment.
+
+
+7. RELATED CLARIFICATION: ASSIGNING A COMPARISON RESULT
+------------------------------------------------------
+
+This example from the following topic clarified what can be assigned
+to a variable. Comparison operators are covered further in Phase 1.2.
+
+    const amountIsSufficient = 900 >= 1000;
+
+Read this in two steps:
+
+1. 900 >= 1000 evaluates to false.
+2. = assigns that false value to amountIsSufficient.
+
+For this example, the resulting value is the same as writing:
+
+    const amountIsSufficient = false;
+
+The variable exists, its value is false, and its type is boolean.
+The correct explanation is not "no value is assigned."
+Here, false expresses the product information "the amount is insufficient."
+
+Parentheses can make the evaluation easier to read:
+
+    const amountIsSufficient = (900 >= 1000);
+
+const prevents reassignment. The comparison produces the Boolean result.
+The = operator assigns that result to the variable.
+
+
+8. QUICK REVIEW
+----------------
+
+- A value is data; a variable provides a name for accessing a value.
+- "1500" is a string; 1500 is a number.
+- true and false are Boolean values when written without quotes.
+- false is an assigned value, not an absence of assignment.
+- const prevents reassignment; let permits it.
+- const does not check whether data or logic is correct.
+- User input does not automatically require let.
+- Calculations do not automatically require let.
+- Evaluate the right side of =, then assign the result to the left side.
+- Use let to update the same variable; use a separate variable when
+  the original value needs to remain available.
+- A 20% discount leaves 80% of the original amount.
+- Object/array content changes and var scope differences need later examples.
