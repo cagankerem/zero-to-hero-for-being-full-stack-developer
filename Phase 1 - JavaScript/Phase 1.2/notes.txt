@@ -1,0 +1,444 @@
+PHASE 1.2 — OPERATIONS, COMPARISONS, AND CONDITIONS
+================================================
+
+Source: Our JavaScript mentoring conversation.
+Format: English recap with corrected explanations and examples.
+Prepared: 2026-11-17.
+
+Purpose
+-------
+Read a business rule in JavaScript, follow the result of a comparison,
+and identify which conditional block runs. Use this knowledge to review
+AI-generated code against the intended product behavior.
+
+These notes document the concepts discussed, rather than certify mastery.
+Code examples use English identifiers and should be read independently
+unless a section explicitly describes them as a continuation.
+Functions belong to Phase 1.3 and are not covered in these notes.
+
+
+1. EXPRESSING A BUSINESS RULE AS A COMPARISON
+--------------------------------------------
+
+Example rule: a coupon can be used when the proposal amount is at least
+1000 TL. The threshold itself is included.
+
+    const proposalAmount = 1500;
+    const couponCanBeUsed = proposalAmount >= 1000;
+
+The >= operator asks: Is the value on the left greater than or equal
+to the value on the right?
+
+1500 >= 1000 evaluates to true. That result is assigned to couponCanBeUsed.
+The variable therefore holds a Boolean value, not a proposal amount.
+
+A variable can receive the result of an expression. Its value does not
+have to be written directly as a literal such as true, false, or 1500.
+
+
+2. THE COMPARISON OPERATORS DISCUSSED
+------------------------------------
+
+Operator    Meaning                         Example                Result
+--------    ------------------------------  ---------------------  ------
+>           Greater than                    1000 > 1000            false
+>=          Greater than or equal to        1000 >= 1000           true
+<           Less than                       500 < 1000             true
+<=          Less than or equal to           1000 <= 1000           true
+===         Strict equality                 1500 === "1500"        false
+!==         Strict inequality               1500 !== "1500"        true
+
+For the primitive examples above, === checks equality without converting
+the operands to a common type. The number 1500 and the string "1500"
+have different types, so strict equality is false and strict inequality
+is true.
+
+In these examples, a comparison produces a Boolean: true or false.
+
+
+3. ASSIGNMENT AND COMPARISON HAVE DIFFERENT JOBS
+-----------------------------------------------
+
+    const proposalAmount = 1500;
+    const amountMatches = proposalAmount === 1500;
+
+In the first line, = assigns 1500 to proposalAmount.
+In the second line, === compares proposalAmount with 1500, and = assigns
+the result of that comparison to amountMatches.
+
+Read this line in two steps:
+
+    const couponCanBeUsed = proposalAmount > 1000;
+
+1. Evaluate proposalAmount > 1000 on the right.
+2. Assign the resulting true or false value to couponCanBeUsed on the left.
+
+Parentheses can make that grouping easier to see:
+
+    const couponCanBeUsed = (proposalAmount > 1000);
+
+The = in this declaration is necessary and correctly placed.
+It does not assign proposalAmount to couponCanBeUsed before comparing it
+with 1000. The comparison result is what gets assigned.
+
+
+4. FALSE IS A VALUE THAT CAN BE ASSIGNED
+---------------------------------------
+
+    const amountIsSufficient = 900 >= 1000;
+
+900 >= 1000 evaluates to false. The declaration assigns that false value
+to amountIsSufficient.
+
+For this example, the resulting value is the same as writing:
+
+    const amountIsSufficient = false;
+
+The variable exists, its value is false, and its type is boolean.
+Here, false expresses the product information "the amount is insufficient."
+It does not mean that no value was assigned.
+
+true and false are Boolean values without quotation marks.
+"true" and "false" are strings instead.
+
+RELATED CONST / LET CLARIFICATION
+
+const prevents reassignment; it does not validate data or business logic.
+It is appropriate above because the variable is not reassigned afterward.
+Using let would also allow the initial assignment, but is unnecessary
+when no reassignment is needed.
+
+Receiving user input does not, by itself, require let. Use let when the
+same variable needs to receive a new assignment in the relevant flow.
+
+
+5. CHECKING THE EXACT BOUNDARY
+------------------------------
+
+For the rule "1000 TL or more," this condition is incorrect:
+
+    const proposalAmount = 1000;
+    const couponCanBeUsed = proposalAmount > 1000;
+
+1000 > 1000 is false, so the exact threshold is incorrectly excluded.
+
+Corrected version:
+
+    const proposalAmount = 1000;
+    const couponCanBeUsed = proposalAmount >= 1000;
+
+1000 >= 1000 is true, which includes the threshold as required.
+The correction is > to >=. The assignment operator = remains in place.
+
+Expected results for this example rule:
+
+Proposal amount    Coupon can be used
+---------------    ------------------
+900                false
+1000               true
+1500               true
+
+
+6. SELECTING A BLOCK WITH IF / ELSE
+-----------------------------------
+
+Use if / else to choose what code runs based on a condition.
+
+    const proposalAmount = 900;
+    const amountIsSufficient = proposalAmount >= 1000;
+
+    if (amountIsSufficient) {
+      console.log("Coupon can be used.");
+    } else {
+      console.log("Coupon cannot be used.");
+    }
+
+- if runs its block when the condition is true.
+- else runs its block when the condition is false.
+- The code grouped inside braces, { ... }, is a block.
+- In this example, only one of the two blocks runs.
+
+console.log(...) writes the supplied value to the developer console.
+It is how these examples make the selected behavior visible.
+
+For 900, amountIsSufficient holds false. The else block runs and prints:
+
+    Coupon cannot be used.
+
+For 1000, amountIsSufficient holds true. The if block runs and prints:
+
+    Coupon can be used.
+
+The comparison can also be used directly as the condition:
+
+    const proposalAmount = 900;
+
+    if (proposalAmount >= 1000) {
+      console.log("Coupon can be used.");
+    } else {
+      console.log("Coupon cannot be used.");
+    }
+
+Both forms give the same behavior for these examples. The first form
+gives the Boolean result a name; the second uses the result directly.
+
+
+7. REQUIRING BOTH CONDITIONS WITH && — AND
+------------------------------------------
+
+Example rule: the amount must be at least 1000 TL AND the coupon must
+be active.
+
+    const proposalAmount = 1500;
+    const couponActive = false;
+
+    if (proposalAmount >= 1000 && couponActive) {
+      console.log("Coupon can be used.");
+    } else {
+      console.log("Coupon cannot be used.");
+    }
+
+For the Boolean conditions used here, && produces true only when both
+conditions are true.
+
+In this example:
+
+- proposalAmount >= 1000 is true.
+- couponActive is false.
+- true && false is false.
+- The else block prints "Coupon cannot be used."
+
+If the amount is 900 and couponActive is true:
+
+- proposalAmount >= 1000 is false.
+- couponActive is true.
+- false && true is false.
+- The else block still prints "Coupon cannot be used."
+
+A Boolean variable can be used directly as a condition. Writing
+couponActive === true is unnecessary in this example.
+
+The declaration const couponActive = true assigns a value.
+Reading couponActive in the condition uses the value already stored there.
+
+
+8. ACCEPTING AN ALTERNATIVE WITH || — OR
+----------------------------------------
+
+This is a separate example rule: a discount is available when the amount
+is at least 1000 TL OR a special campaign is active.
+
+    const proposalAmount = 900;
+    const specialCampaignActive = true;
+
+    if (proposalAmount >= 1000 || specialCampaignActive) {
+      console.log("Discount can be applied.");
+    } else {
+      console.log("Discount cannot be applied.");
+    }
+
+For the Boolean conditions used here, || produces true when at least one
+condition is true. Both conditions may also be true. The result is false
+only when both conditions are false.
+
+Here, the amount condition is false, but the campaign condition is true.
+The if block runs and prints "Discount can be applied."
+
+REVIEWING AN INCORRECT OPERATOR
+
+If AI used && instead of || for this rule, false && true would be false.
+The code would print "Discount cannot be applied."
+
+That violates the requirement: an active special campaign is sufficient
+to allow the discount, even when the amount is below 1000 TL.
+
+Choose the operator from the business rule:
+
+- && requires both Boolean conditions to be true.
+- || requires at least one Boolean condition to be true.
+
+
+9. BOOLEAN RESULT TABLE FOR && AND ||
+-------------------------------------
+
+First condition    Second condition    && result    || result
+---------------    ----------------    ---------    ---------
+true               true                true         true
+true               false               false        true
+false              true                false        true
+false              false               false        false
+
+This table summarizes the Boolean examples discussed. JavaScript's
+behavior with non-Boolean operands and detailed short-circuit evaluation
+were not part of this lesson.
+
+
+10. REVERSING A BOOLEAN WITH ! — NOT
+-----------------------------------
+
+Example rule: a proposal can be edited if it has not been sent.
+
+    const sent = false;
+
+    if (!sent) {
+      console.log("Proposal can be edited.");
+    } else {
+      console.log("Proposal cannot be edited.");
+    }
+
+For a Boolean input, ! produces the opposite Boolean:
+
+- !true evaluates to false.
+- !false evaluates to true.
+
+When sent is false, !sent is true. The if block runs and prints
+"Proposal can be edited."
+
+When sent is true, !sent is false. The else block runs and prints
+"Proposal cannot be edited."
+
+!sent does not reassign sent. It produces a negated value for use in the
+condition. In the code above, sent continues to hold false.
+
+
+11. CHOOSING BETWEEN SEVERAL OPTIONS WITH ELSE IF
+------------------------------------------------
+
+Example discount rules:
+
+- 5000 TL or more: 20% discount.
+- At least 1000 TL but below 5000 TL: 10% discount.
+- Below 1000 TL: no discount.
+
+    const proposalAmount = 1500;
+
+    if (proposalAmount >= 5000) {
+      console.log("20% discount.");
+    } else if (proposalAmount >= 1000) {
+      console.log("10% discount.");
+    } else {
+      console.log("No discount.");
+    }
+
+else if means: if the earlier condition was not satisfied, try this one.
+
+Conditions are checked from top to bottom. The first matching block runs,
+and the remaining branches of this chain are skipped. If none of the
+conditions match, the final else block runs.
+
+For 1500:
+
+1. 1500 >= 5000 is false, so evaluation reaches the next condition.
+2. 1500 >= 1000 is true, so the code prints "10% discount."
+3. The final else block is skipped.
+
+The second condition does not need an additional "below 5000" check.
+Reaching it already means the first condition was false.
+
+For 6000, both comparisons would be true if checked independently.
+In this chain, the first condition matches, "20% discount." is printed,
+and the else if condition is not checked.
+
+This construct selects branches. It is not a loop and does not repeatedly
+run the checks.
+
+
+12. REVIEWING CONDITION ORDER AND BLOCK CONTENTS
+------------------------------------------------
+
+Incorrect version: move the lower threshold and its associated message
+before the higher threshold and its message.
+
+    const proposalAmount = 6000;
+
+    if (proposalAmount >= 1000) {
+      console.log("10% discount.");
+    } else if (proposalAmount >= 5000) {
+      console.log("20% discount.");
+    } else {
+      console.log("No discount.");
+    }
+
+6000 >= 1000 is true. The first block prints "10% discount."
+The second condition is skipped, so a proposal that should receive 20%
+receives the 10% message instead.
+
+For these overlapping threshold rules, check the higher threshold first,
+as shown in Section 11.
+
+CLARIFICATION FROM THE CONVERSATION
+
+The question about rearranging conditions was initially ambiguous.
+Moving a condition together with its associated block is different from
+changing only the conditions while leaving the messages in their positions.
+
+If only the conditions were changed, this would be the resulting code:
+
+    const proposalAmount = 6000;
+
+    if (proposalAmount >= 1000) {
+      console.log("20% discount.");
+    } else if (proposalAmount >= 5000) {
+      console.log("10% discount.");
+    } else {
+      console.log("No discount.");
+    }
+
+For 6000, this version prints "20% discount." The student's prediction
+was correct for this interpretation, which the student later confirmed.
+
+However, for 1500, this version also prints "20% discount.", violating
+the intended 10% rule. One correct output does not establish that all
+branches implement the requirements correctly.
+
+When reviewing code, follow both:
+
+- Which condition is reached and satisfied?
+- What does the selected block actually do?
+
+
+13. CONNECTION TO THE EARLIER ARITHMETIC EXAMPLE
+-----------------------------------------------
+
+The percentage calculation was introduced in Phase 1.1. The conditional
+examples here mostly print eligibility or discount messages; printing
+a message does not itself calculate or apply a discount to an amount.
+
+For an original amount of 1500:
+
+- 1500 * 0.2 gives the discount amount: 300.
+- 1500 * 0.8 gives the remaining amount: 1200.
+
+To preserve the original amount:
+
+    const proposalAmount = 1500;
+    const discountedAmount = proposalAmount * 0.8;
+
+To update the same variable instead:
+
+    let proposalAmount = 1500;
+    proposalAmount = proposalAmount * 0.8;
+
+The calculation belongs on the right of =; the assignment target belongs
+on the left. Detailed assignment and const / let notes are in Phase 1.1.
+
+
+14. QUICK REVIEW
+----------------
+
+- = assigns a value; === compares for strict equality.
+- A comparison can produce a value that is then assigned to a variable.
+- false is a Boolean value, not an absence of assignment.
+- const controls reassignment, not the correctness of a comparison.
+- Match > or >= to whether the business rule includes the threshold.
+- if / else selects between two blocks based on a condition.
+- console.log writes a value to the developer console.
+- With Boolean conditions, && requires both to be true.
+- With Boolean conditions, || requires at least one to be true.
+- ! produces the opposite Boolean without changing the original variable.
+- An if / else if / else chain runs the first matching block only.
+- For the tiered discount example, check the higher threshold first.
+- Review the condition and its associated block together.
+- Check ordinary cases and boundaries against the actual business rule.
+- The outputs above are explained expectations from the conversation;
+  they are not a record of executing these examples in a JavaScript runtime.
